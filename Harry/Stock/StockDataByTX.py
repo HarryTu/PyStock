@@ -146,20 +146,22 @@ def CollectData( file ):
         
         basicdata = GetStockBasicData( codename )
         cashdata = GetStockCashData( codename )
-                
-        if float(cashdata['main_in_cash']) > 0 and float(cashdata['main_out_cash']) > 0:
+        
+        if basicdata is not None and cashdata is not None: 
             
-            rate = round((float(cashdata['main_in_cash']) / float(cashdata['main_out_cash'])), 2)
-                    
-            if rate > 1.5:
-                print "股票名称: " + cashdata['name'] + '  ',
-                print "股票代码: " + codename[2:8] + '  ',
-                print "主力买入: " + cashdata['main_in_cash'] + '  ',
-                print "主力卖出: " + cashdata['main_out_cash'] + '  ',
-                print "主力净额: " + cashdata['netcash'] + '  ',
-                print "换手率: " + basicdata['turnover_rate'] + '  ',
-                print "出入比: " + str(rate) + '  ',
-                print "实际流通值: " + basicdata['circulated_stock']
+            if float(cashdata['main_in_cash']) > 0 and float(cashdata['main_out_cash']) > 0:
+                
+                rate = round((float(cashdata['main_in_cash']) / float(cashdata['main_out_cash'])), 2)
+                        
+                if rate > 1.5:
+                    print "股票名称: " + cashdata['name'] + '  ',
+                    print "股票代码: " + codename[2:8] + '  ',
+                    print "主力买入: " + cashdata['main_in_cash'] + '  ',
+                    print "主力卖出: " + cashdata['main_out_cash'] + '  ',
+                    print "主力净额: " + cashdata['netcash'] + '  ',
+                    print "换手率: " + basicdata['turnover_rate'] + '  ',
+                    print "出入比: " + str(rate) + '  ',
+                    print "实际流通值: " + basicdata['circulated_stock']
             
 
 
@@ -181,6 +183,6 @@ if __name__=='__main__':
 #     print data['volume_amout']
 #     print data['turnover_rate']    
     
-    file = 'C:/temp/stock_basic_list.csv'
+    file = 'C:/tmp/stock_basic_list.csv'
 #     DonwloadAllStockBasic( file )
     CollectData( file )
