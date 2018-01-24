@@ -1,78 +1,117 @@
 # -*- coding=UTF-8 -*-
 
 '''
-Created on 20180122
+Created on 20180124��
 
-@author: Harry
+@author: HarryTu
 '''
 
-from DBUtils import PooledDB
 import pymysql
-import string
+import DBConnection
+import LoggerFactory
+from pip._vendor.distlib._backport.tarfile import TUREAD
+
 
 class DBOperation:
-
-    def __init__(self):
-        self.__hostname = '127.0.0.1'
-        self.__username = 'root'
-        self.__password = 'SHr1ng3r'
-        self.__port = 3306
-        self.__db = 'pystock'
-        self.__charset = 'utf8'
-        self.__mincached = 5  
-        self.__maxcached = 20 
-        self.__maxshared = 30 
-        self.__maxconn = 30 
-            
-            
-    def CreateConnectionPool(self):
-        
-        try:
-
-            pool = PooledDB.PooledDB(pymysql,mincached=self.__mincached, maxconnections=self.__maxconn, maxcached=self.__maxcached,
-                                     user=self.__username, passwd=self.__password, host=self.__hostname, port=self.__port, db=self.__db,charset=self.__charset)
-                   
-            return pool
-         
-        except Exception, e:
-            
-            print "Failed to create connection pool with exception: " + str(e)
-              
-            return None
- 
-     
-    def CreateConnection(self):
-              
-        try: 
-            conn = pymysql.connect(host=self.__hostname, user=self.__username, passwd=self.__password, db=self.__db, port=self.__port)
-           
-            return conn
-        
-        except Exception, e: 
-            
-            print "Failed to create DB connection with exception error: " + str(e)
-            
-            return None
     
+    def __init__(self):
         
-   
-if __name__=='__main__':
+        self.logger = LoggerFactory.getLogger("DBOperation") 
+        
+        self.pool = DBConnection.DBConnection().CreateConnectionPool()
+        
+        
+    
+    def poolvalidate(self):
+        
+        if self.pool is not None:
+            
+            return True
+        
+        else:
+        
+            self.logger.error("Connection Pool is Null object, please check connection Pool creation!")
+                 
+            return False
+        
+    
+    def sqlExecute(self, sql):
+        
+        conn = self.pool.connection()
+            
+        if conn is not None: 
+            
+            try: 
+                
+                cursor = conn.cursor()
+                
+                cursor.execute( sql )
+                
+                conn.commit()
+                
+                cursor.close()
+                
+                conn.close()
+            
+            except Exception, e:
+                
+                conn.rollback()
+                
+                self.logger.error("SQL statement execution failed!" + "\n" + "Error message: " + str(e) + "\n" + sql )
+        
+        else: 
+            
+            self.logger.error("Cannot get DB connection!")
+            
+            return None
+        
+        
+    def queryData(self, sql):
+        
+        conn = self.pool.connection()
+        
+        if conn is not None: 
+            
+            cursor = conn.cursor()
+            cursor.execute( sql )
+            
+            results = cursor.fetchall()
+            
+            cursor.close()
+            conn.close()
+            
+            return results
+        
+        else: 
+            
+            self.logger.error("Cannot get DB connection!")
+            
+            return None
+        
+        
+            
+        
+if __name__ == '__main__':
+    
+    sql = "insert into test(id, name) values(%d, '%s')" %(1, 'commit')
+    sql1 = "select code,name,circulated from stocks"
+    
+    dboper = DBOperation()
+    
+    if dboper.poolvalidate():
+        
+#         results =  dboper.sqlExecute(sql)
+        
+        results = dboper.queryData(sql1)
+        
+        for i in results:
+            
+            if i[2] <= 10:
+                print i[0] + " ",
+                print i[1] + " ",
+                print i[2] 
+        
+        
 
-    sqldbhandle = DBOperation()
-     
-    pool = sqldbhandle.CreateConnectionPool()
-   
-    conn = pool.connection()
-       
-    cur = conn.cursor()
-          
-    cur.execute("select * from test;")
-            
-    results = cur.fetchall()
-            
-    print results 
-            
-    cur.close()
-    conn.close()
-#     
-#     CreateConnection();
+        
+        
