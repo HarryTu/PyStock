@@ -89,6 +89,27 @@ class DBOperation:
             return None
         
         
+    def queryOneData(self, sql):
+        
+        conn = self.pool.connection()
+        
+        if conn is not None: 
+            
+            cursor = conn.cursor()
+            cursor.execute( sql )
+            
+            results = cursor.fetchone()
+            
+            cursor.close()
+            conn.close()
+            
+            return results
+        
+        else: 
+            
+            self.logger.error("Cannot get DB connection!")
+            
+            return None       
             
         
 if __name__ == '__main__':

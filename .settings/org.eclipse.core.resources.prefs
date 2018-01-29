@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
 encoding//Harry/Stock/DBConnection.py=UTF-8
+encoding//Harry/Stock/DBDataHandle.py=UTF-8
 encoding//Harry/Stock/DBOperation.py=UTF-8
+encoding//Harry/Stock/LogicMain.py=UTF-8
+encoding//Harry/Stock/RTStocks.py=UTF-8
 encoding//Harry/Stock/StockDataByTX.py=UTF-8

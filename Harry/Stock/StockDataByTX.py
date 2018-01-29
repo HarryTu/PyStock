@@ -53,6 +53,8 @@ def GetStockBasicData(code, logger):
     
     stockBasicData = {}
     
+    logger.debug("GetStockBasicData_URL: %s" % url)
+    
     data = GetStockData( url )
     
 #     print data[53].split(';')[0]
@@ -69,6 +71,8 @@ def GetStockBasicData(code, logger):
 
             #股票代码
             stockBasicData['code'] = code[2:8]
+            #股票代码别名
+            stockBasicData['codealias'] = code
             #股票名称
             stockBasicData['name'] = data[1]
             #实际流通市值(万)
@@ -86,7 +90,11 @@ def GetStockBasicData(code, logger):
             #当日总交易量(万)
     #         stockBasicData['volume_amout'] = round( int(data[36]) / 10000, 2)
             #当日换手率(万)
-            stockBasicData['turnover_rate'] = data[38]
+            stockBasicData['turnover_rate'] = float(data[38])
+            #当前成交量
+            stockBasicData['price'] = float(data[3])
+            #当前价格
+            stockBasicData['mount'] = float(data[5])
                
             return stockBasicData
         
@@ -111,6 +119,7 @@ def GetStockCashData(code,logger):
     baseurl = "http://qt.gtimg.cn/q=ff_"
     url = baseurl + code
     
+    logger.debug("GetStockCashData_url: %s" % url)
     stockCashData = {}
     
     data = GetStockData( url )
@@ -149,7 +158,9 @@ def GetStockBriefData(code, logger):
     baseurl = "http://qt.gtimg.cn/q=s_"
     
     url = baseurl + code    
-
+    
+    logger.debug("GetStockBriefData_url: %s" % url)
+    
     stockBriefData = {}
     
     data = GetStockData( url )
@@ -162,8 +173,10 @@ def GetStockBriefData(code, logger):
             stockBriefData['price'] = float(data[3]) 
             #当前涨跌幅    
             stockBriefData['changeratio'] = float(data[5])
-            #成交量（万）
-            stockBriefData['amount'] = float(data[7])
+            #成交金额（万）
+            stockBriefData['amountp'] = float(data[7])
+            #成交量（手）(万)
+            stockBriefData['amountn'] = round(float(data[6])/10000, 2)
             
             return stockBriefData
         
@@ -187,30 +200,45 @@ def CollectRealTimeData(code,logger):
     
     realtimeData = {}
     
-    if stockBasicData is not None and stockCashData is not None and stockBriefData is not None:
+    if stockBasicData is not None: 
+        if stockCashData is not None:
+            if stockBriefData is not None:
         
-        rate = 0 
-        
-        if float(stockCashData['main_out_cash']) > 0:
-                 
-            rate = round((float(stockCashData['main_in_cash']) / float(stockCashData['main_out_cash'])), 2)
-    
-        realtimeData['code'] = code[2:8]
-        realtimeData['price'] = stockBriefData['price']
-        realtimeData['cashin'] = stockCashData['main_in_cash']
-        realtimeData['cashout'] = stockCashData['main_out_cash']
-        realtimeData['netvalue'] = stockCashData['netvalue']
-        realtimeData['changeratio'] = stockBriefData['changeratio']
-        realtimeData['turnover'] = stockBasicData['turnover_rate']
-        realtimeData['iorate'] = rate
-        realtimeData['amount'] = stockBriefData['amount']
-        realtimeData['time'] = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')" 
-        
-        return realtimeData
-        
-    else: 
-        
-        return None
+                rate = 0 
+                
+                if float(stockCashData['main_out_cash']) > 0:
+                         
+                    rate = round((float(stockCashData['main_in_cash']) / float(stockCashData['main_out_cash'])), 2)
+            
+                realtimeData['code'] = code[2:8]
+                realtimeData['price'] = stockBriefData['price']
+                realtimeData['cashin'] = stockCashData['main_in_cash']
+                realtimeData['cashout'] = stockCashData['main_out_cash']
+                realtimeData['netvalue'] = stockCashData['netvalue']
+                realtimeData['changeratio'] = stockBriefData['changeratio']
+                realtimeData['turnover'] = stockBasicData['turnover_rate']
+                realtimeData['iorate'] = float(rate)
+                realtimeData['amountp'] = stockBriefData['amountp']
+                realtimeData['amountn'] = stockBriefData['amountn']
+                realtimeData['time'] = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')" 
+                
+                return realtimeData
+                
+            else: 
+                
+                logger.debug("stockBriefData is null")
+                
+                return None
+        else: 
+            
+            logger.debug("stockCashData is null")
+            
+            return None
+    else:
+            
+            logger.debug("stockBasicData is null")
+            
+            return None
 
 
 def DonwloadAllStockBasic( FilePath ):
@@ -301,16 +329,22 @@ def initStockDB( file ):
             
             logger.info("正在处理:  %s" % stockBasicData['name'])
             
+            if stockBasicData['mount'] == 0:
+                status = 0
+            else:
+                status = 1
             
-            sql = "insert into stocks(code, name, scope, circulated, totalstock, peg, lyr, mtime)  values('%s', '%s', '%s', %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
-                    %(stockBasicData['code'], stockBasicData['name'], stockBasicData['scope'], stockBasicData['circulated_stock'], \
-                       stockBasicData['total_stock'], stockBasicData['peg'], stockBasicData['lyr'], mytime)            
+            sql = "insert into stocks(code, codealias, name, scope, circulated, totalstock, status, peg, lyr, mtime)  values('%s', '%s', '%s', '%s', %0.2f, %0.2f, %d, %0.2f, %0.2f, %s )" \
+                    %(stockBasicData['code'], stockBasicData['codealias'], stockBasicData['name'], stockBasicData['scope'], stockBasicData['circulated_stock'], \
+                      stockBasicData['total_stock'], status, stockBasicData['peg'], stockBasicData['lyr'], mytime)            
             
             dboper.sqlExecute( sql )
             
             counter = counter + 1
     
     logger.info("Stock DB initialization has completed! There're %s Stocks created into the Database!" % str(counter))      
+
+
             
 def logic():
     
@@ -349,11 +383,22 @@ if __name__=='__main__':
 #     print data['turnover_rate']    
     
     file = 'C:/temp/stock_basic_list.csv'
-     
+    
+    logger = LoggerFactory.getLogger("Testing")
+#     realtimeData = CollectRealTimeData('sz002129', logger)
 #     DonwloadAllStockBasic( file )
  
     initStockDB( file )
-
+#     stockBasicData = GetStockBasicData('sz000022',logger )
+#     #当前成交量
+#     print stockBasicData['price'] 
+#     #当前价格
+#     print stockBasicData['mount']
+#     
+#     if stockBasicData['price'] == 0 and stockBasicData['mount'] == 0:
+#         print "stop"
+#     else:
+#         print "nornal"
 #     stockCashData = NULL
 #     stockBasicData = NULL
 #     loggerBasicData = LoggerFactory.getLogger("GetStockBasicData")
@@ -377,15 +422,16 @@ if __name__=='__main__':
 #     
 #         realtimeData = CollectRealTimeData('sz002129',logger)
 #         
-#         print realtimeData['code']
-#         print realtimeData['price']
-#         print realtimeData['cashin']
-#         print realtimeData['cashout']
-#         print realtimeData['netvalue']
-#         print realtimeData['changeratio']
-#         print realtimeData['turnover']
-#         print realtimeData['iorate']
-#         print realtimeData['amount']
+#     print realtimeData['code']
+#     print realtimeData['price']
+#     print realtimeData['cashin']
+#     print realtimeData['cashout']
+#     print realtimeData['netvalue']
+#     print realtimeData['changeratio']
+#     print realtimeData['turnover']
+#     print realtimeData['iorate']
+#     print realtimeData['amountp']
+#     print realtimeData['amountn']
         
      
 
