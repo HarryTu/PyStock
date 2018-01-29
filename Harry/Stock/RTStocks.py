@@ -13,16 +13,17 @@ import DBDataHandle
 import StockDataByTX
 import time
 import sys
+import InitTable
 
 
-def HandleRTStock( logger, stocktype, circulated=450000 ):
+def HandleRTStock( logger, stocktype, circulated=1800000 ):
 
     dboper = DBOperation.DBOperation()
 
 #     circulated = 450000  #查找流通市值45亿以下股票 
     
     rtstockslist = []
-    codealiaslist = []
+    
     codelist_sql = ""
     sql ="select code from rtstocks"
     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
@@ -30,7 +31,7 @@ def HandleRTStock( logger, stocktype, circulated=450000 ):
     rtstocks = dboper.queryData(sql)
     
     if len(rtstocks) == 0:
-        DBDataHandle.InitRTStocks(circulated, dboper, logger)
+        InitTable.InitRTStocks(circulated, dboper, logger)
         
     
     if len(rtstocks) > 0:
@@ -112,9 +113,11 @@ if "__name__ == __main__(input)":
         
         logger = LoggerFactory.getLogger("HandleRTStock")
         
+        circulated = 1800000
+        
         while True:
             
-            HandleRTStock(logger, input)
+            HandleRTStock(logger, input, circulated)
             
             time.sleep(10)
             

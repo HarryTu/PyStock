@@ -36,7 +36,7 @@ def getLogger(name):
         
         logger.addHandler( console_handler )
 #         logger.addHandler( logfile_handler )
-        logger.setLevel( logging.INFO )
+        logger.setLevel( logging.DEBUG )
         
         return logger
     

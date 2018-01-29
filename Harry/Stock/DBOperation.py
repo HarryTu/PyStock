@@ -72,6 +72,8 @@ class DBOperation:
         
         if conn is not None: 
             
+            self.logger.debug( sql )
+             
             cursor = conn.cursor()
             cursor.execute( sql )
             

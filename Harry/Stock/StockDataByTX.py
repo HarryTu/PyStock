@@ -308,41 +308,6 @@ def CollectData( file ):
             print ""
             
             
-def initStockDB( file ):
-    
-    logger = LoggerFactory.getLogger("InitStockDB")
-    loggerBasicData = LoggerFactory.getLogger("GetStockBasicData")
-    
-    codelist = GetAllStockCode( file )
-    
-    mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')" 
-    
-    dboper = DBOperation.DBOperation()
-    
-    counter = 0
-    
-    for code in codelist:
-        
-        stockBasicData = GetStockBasicData( code,loggerBasicData )
-        
-        if stockBasicData is not None: 
-            
-            logger.info("正在处理:  %s" % stockBasicData['name'])
-            
-            if stockBasicData['mount'] == 0:
-                status = 0
-            else:
-                status = 1
-            
-            sql = "insert into stocks(code, codealias, name, scope, circulated, totalstock, status, peg, lyr, mtime)  values('%s', '%s', '%s', '%s', %0.2f, %0.2f, %d, %0.2f, %0.2f, %s )" \
-                    %(stockBasicData['code'], stockBasicData['codealias'], stockBasicData['name'], stockBasicData['scope'], stockBasicData['circulated_stock'], \
-                      stockBasicData['total_stock'], status, stockBasicData['peg'], stockBasicData['lyr'], mytime)            
-            
-            dboper.sqlExecute( sql )
-            
-            counter = counter + 1
-    
-    logger.info("Stock DB initialization has completed! There're %s Stocks created into the Database!" % str(counter))      
 
 
             
@@ -366,6 +331,7 @@ def logic():
 
 if __name__=='__main__':
     
+    print ""
 #     data = GetStockBasicData('sh603299')
 #     
 # #     for i in range(0,len(data)):
@@ -382,13 +348,13 @@ if __name__=='__main__':
 #     print data['volume_amout']
 #     print data['turnover_rate']    
     
-    file = 'C:/temp/stock_basic_list.csv'
-    
-    logger = LoggerFactory.getLogger("Testing")
-#     realtimeData = CollectRealTimeData('sz002129', logger)
-    DonwloadAllStockBasic( file )
- 
-    initStockDB( file )
+#     file = 'C:/temp/stock_basic_list.csv'
+#     
+#     logger = LoggerFactory.getLogger("Testing")
+# #     realtimeData = CollectRealTimeData('sz002129', logger)
+#     DonwloadAllStockBasic( file )
+#  
+#     initStockDB( file )
 #     stockBasicData = GetStockBasicData('sz000022',logger )
 #     #当前成交量
 #     print stockBasicData['price'] 
@@ -433,6 +399,3 @@ if __name__=='__main__':
 #     print realtimeData['amountp']
 #     print realtimeData['amountn']
         
-     
-
-    

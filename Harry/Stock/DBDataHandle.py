@@ -57,37 +57,33 @@ def UpdateRTData( stockdata, logger, mytime ):
 
 
 
-def InitRTStocks( circulated, dboper, logger ):
-    
-    sql = "select codealias from stocks where status=1 and circulated<= %0.2f" % circulated
-    mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
-    
-    codelist = dboper.queryData(sql)
-    
-    if codelist is not None and len(codelist) > 0:
-            
-            logger.info("初始化RTStock表...总有 %s只股票需要处理!!"%len(codelist))
-            
-            for code in codelist:
-                 
-                realtimeData = StockDataByTX.CollectRealTimeData(code[0], logger) 
-                  
-                if realtimeData is not None: 
+def UpdateMyStock( stockData, logger, mytime ):
                     
-                    logger.info("正在处理: %s" % realtimeData['code'])
+    sql = "update mystocks set cashin=%0.2f, cashout=%0.2f, netvalue=%0.2f, iorate=%0.2f, turnover=%0.2f, price=%0.2f, changeratio=%0.2f, amountp=%0.2f, amountn=%0.2f, mtime=%s where code='%s'" \
+                %(stockData['cashin'], stockData['cashout'], stockData['netvalue'], stockData['iorate'], stockData['turnover'], stockData['price'], stockData['changeratio'], stockData['amountp'],stockData['amountn'], mytime, stockData['code']) 
+
+    
+    logger.debug( sql )
+    
+    dboper = DBOperation.DBOperation()
+    
+    dboper.sqlExecute(sql)
+    
+
+
+def InsertMyStock( stockData, logger, mytime ):
                     
-                    InsertRTData(realtimeData, logger, mytime)
-                      
-                else: 
-                      
-                    logger.error("股票: %s 的相关信息获取失败..." % code)
-    #
-            logger.info("初始化RTStock表完成!")
-    else: 
-            
-        logger.error("股票代码列表信息获取失败.....")
+    sql = "insert into mystocks(code, name, cashin, cashout, initnetvalue, iorate, turnover, price, initchangeratio, amountp, amountn, mtime)\
+                 values('%s', '%s', '%0.2f', '%0.2f', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
+        %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], \
+          stockData['iorate'], stockData['turnover'], stockData['price'], stockData['initchangeratio'], stockData['amountp'], stockData['amountn'], mytime )  
+                
     
+    logger.debug( sql )
     
+    dboper = DBOperation.DBOperation()
+    
+    dboper.sqlExecute(sql)
 
 
 def GetStockCode():
@@ -109,4 +105,4 @@ if __name__=='__main__':
     dboper = DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("InitRTStocks")
     
-    InitRTStocks(circulated,dboper,logger)
+#     InitRTStocks(circulated,dboper,logger)
