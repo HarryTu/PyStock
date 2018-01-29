@@ -386,7 +386,7 @@ if __name__=='__main__':
     
     logger = LoggerFactory.getLogger("Testing")
 #     realtimeData = CollectRealTimeData('sz002129', logger)
-#     DonwloadAllStockBasic( file )
+    DonwloadAllStockBasic( file )
  
     initStockDB( file )
 #     stockBasicData = GetStockBasicData('sz000022',logger )

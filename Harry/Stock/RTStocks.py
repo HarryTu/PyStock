@@ -15,9 +15,8 @@ import time
 import sys
 
 
-def HandleRTStock( stocktype, circulated=450000 ):
+def HandleRTStock( logger, stocktype, circulated=450000 ):
 
-    logger = LoggerFactory.getLogger("HandleRTStock")
     dboper = DBOperation.DBOperation()
 
 #     circulated = 450000  #查找流通市值45亿以下股票 
@@ -104,14 +103,21 @@ if "__name__ == __main__(input)":
 #     input = raw_input()
 
     input = sys.argv[1]
-        
+         
     if input is None or input not in('sh','sz'):
-        
+         
         print "输入股票市场号码:'sh' 或者 'sz'"
-        
+         
     else:
         
-        HandleRTStock(input)
+        logger = LoggerFactory.getLogger("HandleRTStock")
+        
+        while True:
+            
+            HandleRTStock(logger, input)
+            
+            time.sleep(10)
+            
         
         
              
