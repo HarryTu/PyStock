@@ -12,11 +12,11 @@ import LoggerFactory
 import DBDataHandle
 
 
-def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, changerate=2, iorate=1.4, amountp=1000 ):
+def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, changerate=2, iorate=1.4, amountp=1000, netvaluemin=1000 ):
     
-    select_sql = "select a.code,a.name,b.cashin,b.cashout,b.netvalue,b.iorate,b.turnover,b.price,b.changeratio,b.amountp,b.amountn from stocks a, rtstocks b \
-            where a.code=b.code and b.iorate>=%0.2f and b.amountp>=%0.2f and b.changeratio > %0.2f and( circulated >= %0.2f and circulated <= %0.2f)" \
-            %(iorate,amountp,changerate,circulatedMin,circulatedMax)
+    select_sql = "select a.code,a.name,b.cashin,b.cashout,b.netvalue,b.iorate,b.turnover,b.price,b.changeratio,b.amountp,b.amountn, a.codealias from stocks a, rtstocks b \
+            where a.code=b.code and b.iorate>=%0.2f and b.amountp>=%0.2f and b.changeratio > %0.2f and( circulated >= %0.2f and circulated <= %0.2f) and b.netvalue >= %0.2f" \
+            %(iorate,amountp,changerate,circulatedMin,circulatedMax,netvaluemin)
     
     check_sql="select code from mystocks"
     
@@ -40,22 +40,23 @@ def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, cha
         for data in selectedData:
             
             if checkExist( data[0], codelist ):
-        
-                stockData['code']=data[0]
-                stockData['name']=data[1]
-                stockData['cashin']=data[2]
-                stockData['cashout']=data[3]
-                stockData['netvalue']=data[4]  
-                stockData['iorate']=data[5]
-                stockData['turnover']=data[6]
-                stockData['price']=data[7]
-                stockData['changeratio']=data[8]
-                stockData['amountp']=data[9]
-                stockData['amountn']=data[10]
                 
-                logger.info("更新股票信息: %s" %stockData['name'])
-                
-                DBDataHandle.UpdateMyStock(stockData, logger, mytime)
+                logger.info("%s 此股票已在股票池中..." % data[0])
+#                 stockData['code']=data[0]
+#                 stockData['name']=data[1]
+#                 stockData['cashin']=data[2]
+#                 stockData['cashout']=data[3]
+#                 stockData['netvalue']=data[4]  
+#                 stockData['iorate']=data[5]
+#                 stockData['turnover']=data[6]
+#                 stockData['price']=data[7]
+#                 stockData['changeratio']=data[8]
+#                 stockData['amountp']=data[9]
+#                 stockData['amountn']=data[10]
+#                 
+#                 logger.info("更新股票信息: %s" %stockData['name'])
+#                 
+#                 DBDataHandle.UpdateMyStock(stockData, logger, mytime)
                 
                 
             else:
@@ -71,6 +72,7 @@ def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, cha
                 stockData['initchangeratio']=data[8]
                 stockData['amountp']=data[9]
                 stockData['amountn']=data[10]
+                stockData['codealias']=data[11]
             
                 logger.info("插入新选出股票: %s" %stockData['name'])
                 
@@ -83,7 +85,7 @@ def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, cha
     
     else: 
         
-        logger.info("没有发现符合规则的股票!!!")           
+        logger.info("暂时没有发现符合规则的股票!!!")           
                 
                 
                 
@@ -102,5 +104,9 @@ if __name__ == '__main__':
     logger = LoggerFactory.getLogger("SelectMyStock")
     
     SelectMyStock(dboper, logger)
+    
+#     while True:
+#         SelectMyStock(dboper, logger)
+#         time.sleep(10)
     
     
