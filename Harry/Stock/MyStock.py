@@ -103,10 +103,10 @@ if __name__ == '__main__':
     dboper = DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("SelectMyStock")
     
-    SelectMyStock(dboper, logger)
+#     SelectMyStock(dboper, logger)
     
-#     while True:
-#         SelectMyStock(dboper, logger)
-#         time.sleep(10)
+    while True:
+        SelectMyStock(dboper, logger)
+        time.sleep(5)
     
     

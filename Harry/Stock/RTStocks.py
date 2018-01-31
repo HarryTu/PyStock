@@ -14,7 +14,10 @@ import StockDataByTX
 import time
 import sys
 import InitTable
+import threading
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def HandleRTStock( logger, stocktype, circulated=1800000 ):
 
@@ -56,38 +59,71 @@ def HandleRTStock( logger, stocktype, circulated=1800000 ):
             
             for code in results:
             
-                if checkExist(code[0][2:8], rtstockslist):
+                if checkExist( code[0][2:8], rtstockslist ):
                     
                     logger.info("RT表已有股票:%s 信息,将做更新..."%code[0])
                     
-                    realtimeData = StockDataByTX.CollectRealTimeData(code[0], logger) 
-                  
-                    if realtimeData is not None: 
-                    
-                        logger.info("正在处理: %s" % realtimeData['code'])
-                        
-                        DBDataHandle.UpdateRTData(realtimeData, logger, mytime)
-                    
-                    else: 
-                        
-                        logger.error("股票: %s, 数据获取失败!!!"%code[0])
+                    threading.Thread(target = UpdateRT, args=(code[0], logger, mytime)).start()
+                    time.sleep(0.3)
+#                     realtimeData = StockDataByTX.CollectRealTimeData(code[0], logger) 
+#                    
+#                     if realtimeData is not None: 
+#                      
+#                         logger.info("正在处理: %s" % realtimeData['code'])
+#                          
+#                         DBDataHandle.UpdateRTData(realtimeData, logger, mytime)
+#                      
+#                     else: 
+#                          
+#                         logger.error("股票: %s, 数据获取失败!!!"%code[0])
                     
                 else:
                     
                     logger.info("RT表无股票:%s 信息,将插入新值..."%code[0])
                     
+#                     InsertRT( code[0], logger )
+                    
                     realtimeData = StockDataByTX.CollectRealTimeData(code[0], logger) 
-                  
+                   
                     if realtimeData is not None: 
-                    
+                     
                         logger.info("正在处理: %s" % realtimeData['code'])
-                        
+                         
                         DBDataHandle.InsertRTData(realtimeData, logger, mytime)
-                    
+                     
                     else: 
-                        
+                         
                         logger.error("股票: %s, 数据获取失败!!!"%code[0])
                         
+
+
+def UpdateRT(code, logger, mytime):
+    
+    realtimeData = StockDataByTX.CollectRealTimeData(code, logger) 
+  
+    if realtimeData is not None: 
+    
+        logger.info("正在处理: %s" % realtimeData['code'])
+        
+        DBDataHandle.UpdateRTData(realtimeData, logger, mytime)
+        
+        
+        
+def InsertRT(code, logger):
+
+
+    realtimeData = StockDataByTX.CollectRealTimeData(code, logger) 
+                  
+    if realtimeData is not None: 
+    
+        logger.info("正在处理: %s" % realtimeData['code'])
+        
+        DBDataHandle.InsertRTData(realtimeData, logger, mytime)
+    
+    else: 
+        
+        logger.error("股票: %s, 数据获取失败!!!"%code)
+            
 
 
 def checkExist(codename, codelist):            
@@ -103,7 +139,8 @@ if "__name__ == __main__(input)":
     
 #     input = raw_input()
 
-    input = sys.argv[1]
+#     input = sys.argv[1]
+    input = 'sz'
          
     if input is None or input not in('sh','sz'):
          
@@ -115,13 +152,28 @@ if "__name__ == __main__(input)":
         
         circulated = 1800000
         
-        while True:
+#         while True:
+        
+        mytime = int(time.strftime("%H%M%S"))
+        
+        print mytime 
+        
+#         if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
             
-            HandleRTStock(logger, input, circulated)
+        HandleRTStock(logger, input, circulated)
             
-            time.sleep(10)
+#             time.sleep(1)
+#     
+#         elif( mytime < 93000 or mytime > 150100):
+#             
+#             logger.info("不在交易时间...退出程序!")
+            
             
         
+#         else: 
+#             
+#             logger.info("在休息时间中，等待开盘....")
+#             time.sleep(60)
         
              
     

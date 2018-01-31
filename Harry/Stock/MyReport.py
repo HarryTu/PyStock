@@ -58,7 +58,7 @@ def GetMyStockReport(dboper):
             
             print "No data can be found!!"
         
-        time.sleep(10)
+        time.sleep(1)
         print "Complete!"
         print " "
 
@@ -77,7 +77,9 @@ def Test():
     
 
 if __name__ == '__main__':
-    
+            
     dboper = DBOperation.DBOperation()
     GetMyStockReport(dboper)
-#     Test()
+
+    
+        

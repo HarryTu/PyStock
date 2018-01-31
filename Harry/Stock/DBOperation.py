@@ -1,7 +1,7 @@
 # -*- coding=UTF-8 -*-
 
 '''
-Created on 20180124��
+Created on 20180124
 
 @author: HarryTu
 '''

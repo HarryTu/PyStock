@@ -3,14 +3,14 @@
 '''
 Created on 20180130
 
-@author: tuh
+@author: HarryTu
 '''
 
 import DBOperation
 import StockDataByTX
 import LoggerFactory
 import time
-from Harry.Stock import DBDataHandle
+import DBDataHandle
 
 
 def UpdateMyStock(dboper, logger):
@@ -81,9 +81,9 @@ if __name__=="__main__":
     dboper = DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("MyStockUpdate")        
     
-    UpdateMyStock(dboper, logger)
+#     UpdateMyStock(dboper, logger)
     
-#     while True: 
-#         
-#         UpdateMyStock(dboper, logger)
-#         time.sleep(5)
+    while True: 
+         
+        UpdateMyStock(dboper, logger)
+        time.sleep(1)

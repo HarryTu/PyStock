@@ -124,7 +124,6 @@ def GetStockCashData(code,logger):
     
     data = GetStockData( url )
       
-
     if data is not None and len(data) > 1:
         
         try: 

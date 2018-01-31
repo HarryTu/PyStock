@@ -86,6 +86,17 @@ def InitRTStocks( circulated, dboper, logger ):
         logger.error("股票代码列表信息获取失败.....")
     
 
+def InitMyStocks( dboper, logger ):
+    
+    sql = "delete from mystocks"
+    
+    logger.info("初始化MyStocks表....")
+    
+    dboper.sqlExecute(sql)
+    
+    logger.info("MyStocks表初始化完成!")
+
+
 if __name__ == '__main__':
     
     circulated = 1800000
@@ -94,4 +105,6 @@ if __name__ == '__main__':
     logger = LoggerFactory.getLogger("InitRTStocks")
     
     InitRTStocks(circulated, dboper, logger)
+    
+    InitMyStocks(dboper, logger)
     

@@ -20,10 +20,10 @@ class DBConnection:
         self.__port = 3306
         self.__db = 'pystock'
         self.__charset = 'utf8'
-        self.__mincached = 5  
-        self.__maxcached = 20 
-        self.__maxshared = 30 
-        self.__maxconn = 30 
+        self.__mincached = 10  
+        self.__maxcached = 3000 
+        self.__maxshared = 3000 
+        self.__maxconn = 3000 
         
         self.logger = LoggerFactory.getLogger("DBConnection")
             
