@@ -14,7 +14,7 @@ import os
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-def GetMyStockReport(dboper):
+def PrintMyStockReport(dboper):
     
     sql = "select code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, \
             initchangeratio, changeratio, amountp,inittime from mystocks order by changeratio" 
@@ -27,6 +27,7 @@ def GetMyStockReport(dboper):
             
             print ("{:^30s}".format('代码')),
             print ("{:^30s}".format('股票名称')),
+            print ("{:^25s}".format('上榜净额')),
             print ("{:^25s}".format('净额')),
             print ("{:^33s}".format('换手率')),
             print ("{:^20s}".format('上榜时间')),
@@ -39,7 +40,8 @@ def GetMyStockReport(dboper):
                 
                 print ("{:^10s}".format(stock[0])),
                 print ("{:^10s}".format(stock[1])),
-                print ("{:^19s}".format(str(stock[5]))),
+                print ("{:^6s}".format(str(stock[4]))),
+                print ("{:^14s}".format(str(stock[5]))),
                 print ("{:^1.2f}".format(stock[7])),
                 print ("{:^12s}".format(str(stock[11])[11:])),
                 print ("{:^12.2f}".format(stock[8])),
@@ -74,12 +76,40 @@ def Test():
     print ("{:^12s}".format('amountp'))
 
     
+
+def GetMyStockReport(dboper):
+    
+    sql = "select code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, \
+            initchangeratio, changeratio, amountp,inittime from mystocks order by changeratio" 
+    
+    
+    stocklist = []
+    
+    results = dboper.queryData(sql)
+    
+    if results is not None and len(results)>0:
+        
+        for stock in results: 
+            
+            stockData = {}
+            stockData['code'] = stock[0]
+            stockData['name'] = stock[1]
+            stockData['changeratio'] = stock[9]
+        
+            stocklist.append(stockData) 
+        
+        return stocklist
+    
+    else: 
+        
+        return None
+    
     
 
 if __name__ == '__main__':
             
     dboper = DBOperation.DBOperation()
-    GetMyStockReport(dboper)
+    PrintMyStockReport(dboper)
 
     
         

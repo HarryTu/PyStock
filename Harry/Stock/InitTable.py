@@ -74,7 +74,7 @@ def InitRTStocks( circulated, dboper, logger ):
                     
                     logger.info("正在处理: %s" % realtimeData['code'])
                     
-                    DBDataHandle.InsertRTData(realtimeData, logger, mytime)
+                    DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
                       
                 else: 
                       

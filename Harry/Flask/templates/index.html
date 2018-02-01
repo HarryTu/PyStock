@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset = "utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inventory Database</title>
+    <style type="text/css">
+        body { background-color: white; }
+    </style>
+</head>
+
+<body class="body">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <div class="jumbotron text-center">
+        <div class="page-header">
+            <h3 class="text-primary">Inventory Management Database: All Employees </h3>
+        </div>
+		<button class="button" name='register' type="button">register </button>
+    </div>  
+	
+	<div id="stock_dashboard">
+		
+	</div>
+	
+<script>
+
+$(function(){
+	$('button').click(function(){
+	    $.ajax({
+	      url: "/dashboard",
+	      type: "POST",
+	      data: {jsdata: text},
+	      success: function(response) {
+	        $("#stock_dashboard").html(response);
+	      },
+	      error: function(xhr) {
+	        //Do Something to handle error
+	      }
+	    });
+	});
+
+</script>
+
+</body>
+
+</html>

@@ -9,13 +9,13 @@ Created on 20180127
 from Harry.Stock import DBDataHandle
 import StockDataByTX
 import LoggerFactory
+import DBOperation
 
-
-def DailyHisData():
+def DailyHisData(dboper):
     
     logger = LoggerFactory.getLogger("DailyHisData")
     
-    codelist = DBDataHandle.GetStockCode()
+    codelist = DBDataHandle.GetStockCode(dboper)
     
     if codelist is not None and len(codelist) > 1:
         
@@ -27,7 +27,7 @@ def DailyHisData():
                 
                 logger.info("正在处理: %s" % realtimeData['code'])
                 
-                DBDataHandle.InsertHisData(realtimeData, logger)
+                DBDataHandle.InsertHisData(dboper, realtimeData, logger)
                   
             else: 
                   
@@ -40,6 +40,7 @@ def DailyHisData():
 
 if "__name == __main__":
     
-    DailyHisData()   
+    dboper = DBOperation.DBConnection()
+    DailyHisData(dboper)   
     
     

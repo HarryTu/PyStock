@@ -1,0 +1,16 @@
+  <table >
+      <tr>
+          <th>code</th> 
+          <th>name</th>
+          <th>changerato</th>              
+      </tr>
+
+      {% for data in stocks %}
+          <tr>
+              <td>{{data['code']}}</td>
+              <td>{{data['name']}}</td>
+              <td>{{data['changeratio']}}</td>
+          </tr>
+      {% endfor %}
+
+  </table>

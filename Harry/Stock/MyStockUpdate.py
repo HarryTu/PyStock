@@ -58,7 +58,7 @@ def UpdateMyStock(dboper, logger):
                         realtimeData['amountn'] = stockBriefData['amountn']
                         
                         logger.info("开始更新股票: %s" %stockBasicData['name'])
-                        DBDataHandle.UpdateMyStock(realtimeData, logger, mytime)
+                        DBDataHandle.UpdateMyStock(dboper, realtimeData, logger, mytime)
                     
                     else:
                         

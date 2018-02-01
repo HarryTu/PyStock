@@ -81,7 +81,7 @@ def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, cha
 #                     %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], \
 #                       stockData['iorate'], stockData['turnover'], stockData['price'], stockData['initchangeratio'], stockData['amountp'], stockData['amountn'], mytime )  
                 
-                DBDataHandle.InsertMyStock(stockData, logger, mytime)
+                DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
     
     else: 
         
@@ -104,9 +104,27 @@ if __name__ == '__main__':
     logger = LoggerFactory.getLogger("SelectMyStock")
     
 #     SelectMyStock(dboper, logger)
-    
     while True:
-        SelectMyStock(dboper, logger)
-        time.sleep(5)
+        
+        mytime = int(time.strftime("%H%M%S"))
+       
+        if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
+            
+            SelectMyStock(dboper, logger)
+            
+            time.sleep(2)
+     
+        elif( mytime < 93000 or mytime > 150100):
+             
+#                 logger.info("不在交易时间...退出程序!")
+            logger.info("Out of trade time now...exit!")
+            
+            break
+      
+        else: 
+            
+#                 logger.info("休息时间。。。")
+            logger.info("In the rest time....waiting for trade market reopen afternoon")
+            time.sleep(60)
     
     
