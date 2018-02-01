@@ -33,7 +33,7 @@ mtime datetime,
 inittime datetime		
 );
 
-alter table mystocks add primary key(code)
+alter table mystocks add primary key(code);
 
 create table rtstocks(
 code varchar(7),

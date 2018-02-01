@@ -84,6 +84,6 @@ if __name__=="__main__":
 #     UpdateMyStock(dboper, logger)
     
     while True: 
-         
+          
         UpdateMyStock(dboper, logger)
         time.sleep(1)

@@ -40,7 +40,7 @@ def DailyHisData(dboper):
 
 if "__name == __main__":
     
-    dboper = DBOperation.DBConnection()
+    dboper = DBOperation.DBOperation()
     DailyHisData(dboper)   
     
     

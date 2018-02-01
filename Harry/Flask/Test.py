@@ -23,18 +23,19 @@ def TestData():
     
     return stockList
 
-
+ 
 @app.route("/")
 def index():
     return render_template('index.html')
 
 
-@app.route('/dashborad')
-def dashborad():
+@app.route('/dashboard')
+def dashboard():
     
+    print "dashboard"
     stockData = TestData()
     
-    return render_template('Dashborad.html', stocks = stockData)            
+    return render_template('dashboard.html', stocks = stockData)            
 
 if __name__=="__main__":
 
