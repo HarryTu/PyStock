@@ -94,7 +94,12 @@ def GetMyStockReport(dboper):
             stockData = {}
             stockData['code'] = stock[0]
             stockData['name'] = stock[1]
+            stockData['initnetvalue'] = stock[4]
+            stockData['netvalue'] = stock[5]
+            stockData['inittime'] = stock[11]
+            stockData['initchangeratio'] = stock[8]
             stockData['changeratio'] = stock[9]
+ 
         
             stocklist.append(stockData) 
         

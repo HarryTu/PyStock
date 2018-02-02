@@ -7,6 +7,7 @@ Created on 20180129
 '''
 
 import time
+import datetime
 import DBOperation
 import LoggerFactory
 import DBDataHandle
@@ -103,28 +104,28 @@ if __name__ == '__main__':
     dboper = DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("SelectMyStock")
     
-    SelectMyStock(dboper, logger)
-#     while True:
-#         
-#         mytime = int(time.strftime("%H%M%S"))
-#        
-#         if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
-#             
-#             SelectMyStock(dboper, logger)
-#             
-#             time.sleep(2)
-#      
-#         elif( mytime < 93000 or mytime > 150100):
-#              
-# #                 logger.info("不在交易时间...退出程序!")
-#             logger.info("Out of trade time now...exit!")
-#             
-#             break
-#       
-#         else: 
-#             
-# #                 logger.info("休息时间。。。")
-#             logger.info("In the rest time....waiting for trade market reopen afternoon")
-#             time.sleep(60)
+#     SelectMyStock(dboper, logger)
+    while True:
+          
+        mytime = int(time.strftime("%H%M%S"))
+         
+        if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
+              
+            SelectMyStock(dboper, logger)
+              
+            time.sleep(2)
+       
+        elif( mytime < 93000 or mytime > 150100):
+               
+#                 logger.info("不在交易时间...退出程序!")
+            logger.info("Out of trade time now...exit!")
+              
+            break
+        
+        else: 
+              
+#                 logger.info("休息时间。。。")
+            logger.info("In the rest time....waiting for trade market reopen afternoon")
+            time.sleep(60)
     
     

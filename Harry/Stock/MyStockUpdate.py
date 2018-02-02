@@ -82,8 +82,26 @@ if __name__=="__main__":
     logger = LoggerFactory.getLogger("MyStockUpdate")        
     
 #     UpdateMyStock(dboper, logger)
-    
-    while True: 
-          
-        UpdateMyStock(dboper, logger)
-        time.sleep(1)
+    while True:
+        
+        mytime = int(time.strftime("%H%M%S"))
+        
+        if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
+             
+            UpdateMyStock(dboper, logger)
+             
+            time.sleep(1)
+      
+        elif( mytime < 93000 or mytime > 150100):
+              
+#                 logger.info("不在交易时间...退出程序!")
+            logger.info("Out of trade time now...exit!")
+             
+            break
+       
+        else: 
+             
+#                 logger.info("休息时间。。。")
+            logger.info("In the rest time....waiting for trade market reopen afternoon")
+            time.sleep(60)
+        

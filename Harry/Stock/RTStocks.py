@@ -12,6 +12,7 @@ import LoggerFactory
 import DBDataHandle
 import StockDataByTX
 import time
+import datetime
 import sys
 import InitTable
 import threading
@@ -55,7 +56,7 @@ def HandleRTStock( logger, stocktype, circulated=1800000 ):
             
             
         results = dboper.queryData( codelist_sql ) 
-                  
+      
         if results is not None and len(results) > 0:
             
             for code in results:
@@ -65,38 +66,15 @@ def HandleRTStock( logger, stocktype, circulated=1800000 ):
                     logger.info("RT表已有股票:%s 信息,将做更新..."%code[0])
                     
                     threading.Thread(target = UpdateRT, args=(dboper, code[0], logger, mytime)).start()
-                    time.sleep(0.2)
-#                     realtimeData = StockDataByTX.CollectRealTimeData(code[0], logger) 
-#                    
-#                     if realtimeData is not None: 
-#                      
-#                         logger.info("正在处理: %s" % realtimeData['code'])
-#                          
-#                         DBDataHandle.UpdateRTData(realtimeData, logger, mytime)
-#                      
-#                     else: 
-#                          
-#                         logger.error("股票: %s, 数据获取失败!!!"%code[0])
+                    time.sleep(0.1)
                     
                 else:
                     
                     logger.info("RT表无股票:%s 信息,将插入新值..."%code[0])
-                    
-#                     InsertRT( code[0], logger )
-                    
-                    realtimeData = StockDataByTX.CollectRealTimeData(code[0], logger) 
-                   
-                    if realtimeData is not None: 
-                     
-                        logger.info("正在处理: %s" % realtimeData['code'])
                          
-                        DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
-                     
-                    else: 
-                         
-                        logger.error("股票: %s, 数据获取失败!!!"%code[0])
-                        
-
+                    InsertRT(dboper, code[0], logger, mytime)
+                    
+        
 
 def UpdateRT(dboper, code, logger, mytime):
     
@@ -110,7 +88,7 @@ def UpdateRT(dboper, code, logger, mytime):
         
         
         
-def InsertRT(dboper, code, logger):
+def InsertRT(dboper, code, logger, mytime):
 
 
     realtimeData = StockDataByTX.CollectRealTimeData(code, logger) 
@@ -153,25 +131,27 @@ if "__name__ == __main__(input)":
         
         circulated = 1800000
         
-        while True:
-        
-            mytime = int(time.strftime("%H%M%S"))
-           
-            if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
-                
-                HandleRTStock(logger, input, circulated)
-                
-                time.sleep(1)
+#         HandleRTStock(logger, input, circulated)
          
-            elif( mytime < 93000 or mytime > 150100):
+        while True:
+         
+            mytime = int(time.strftime("%H%M%S"))
+            
+            if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
                  
+                HandleRTStock(logger, input, circulated)
+                 
+                time.sleep(1)
+          
+            elif( mytime < 93000 or mytime > 150100):
+                  
 #                 logger.info("不在交易时间...退出程序!")
                 logger.info("Out of trade time...exit!")
-                
+                 
                 break
-          
+           
             else: 
-                
+                 
 #                 logger.info("休息时间。。。")
                 logger.info("In the rest time....waiting for trade market reopen afternoon")
                 time.sleep(60)

@@ -10,12 +10,13 @@ from flask import Flask, request, render_template
 
 import Harry.Stock.DBOperation as DBOperation
 import Harry.Stock.MyReport as MyReport
+import Harry.Stock.LoggerFactory as LoggerFactory
 
 
 app = Flask(__name__)
 
 
-def TestData():
+def GetReportData():
     
     dboper = DBOperation.DBOperation()
     
@@ -32,8 +33,7 @@ def index():
 @app.route('/dashboard')
 def dashboard():
     
-    print "dashboard"
-    stockData = TestData()
+    stockData = GetReportData()
     
     return render_template('dashboard.html', stocks = stockData)            
 

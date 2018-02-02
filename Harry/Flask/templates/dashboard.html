@@ -4,13 +4,22 @@
       <tr algin="center">
           <td>股票代码</td> 
           <td>股票名</td>
-          <td>涨幅</td>              
+          <td>上榜时间</td>
+          <td>初始净额</td>
+          <td>当前净额</td>
+          <td>初始涨幅</td>
+          <td>当前涨幅</td>
+                        
       </tr>
 
       {% for data in stocks %}
           <tr algin="center">
               <td>{{data['code']}}</td>
               <td>{{data['name']}}</td>
+              <td>{{data['inittime']}}</td>
+              <td>{{data['initnetvalue']}}</td>
+              <td>{{data['netvalue']}}</td>
+              <td>{{data['initchangeratio']}}</td>
               <td>{{data['changeratio']}}</td>
           </tr>
       {% endfor %}

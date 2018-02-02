@@ -10,6 +10,7 @@ import LoggerFactory
 import StockDataByTX
 import time
 import DBDataHandle
+import threading
 
 
 def initStockDB( file ):
@@ -68,23 +69,31 @@ def InitRTStocks( circulated, dboper, logger ):
             
             for code in codelist:
                  
-                realtimeData = StockDataByTX.CollectRealTimeData(code[0], logger) 
-                  
-                if realtimeData is not None: 
-                    
-                    logger.info("正在处理: %s" % realtimeData['code'])
-                    
-                    DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
-                      
-                else: 
-                      
-                    logger.error("股票: %s 的相关信息获取失败..." % code)
+                threading.Thread(target = InsertRT, args=(dboper, code[0], logger, mytime)).start()
+                time.sleep(0.2)
     #
             logger.info("初始化RTStock表完成!")
     else: 
             
         logger.error("股票代码列表信息获取失败.....")
+
+
+
+def InsertRT(dboper, code, logger, mytime):
     
+    realtimeData = StockDataByTX.CollectRealTimeData(code, logger) 
+      
+    if realtimeData is not None: 
+        
+        logger.info("正在处理: %s" % realtimeData['code'])
+        
+        DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
+          
+    else: 
+          
+        logger.error("股票: %s 的相关信息获取失败..." % code)  
+
+
 
 def InitMyStocks( dboper, logger ):
     
