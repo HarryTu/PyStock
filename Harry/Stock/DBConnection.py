@@ -11,6 +11,7 @@ import pymysql
 import string
 import LoggerFactory
 import datetime
+import time
 
 class DBConnection:
 
@@ -67,7 +68,9 @@ if __name__=='__main__':
       
     pool = sqldbhandle.CreateConnectionPool()
     
-    hisdaytime = "str_to_date('%s'," % (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
+    sql_rtstock = "select count(*) from rtstocks where mtime >= %s" % mytime
     
     if pool is not None: 
          
@@ -75,7 +78,7 @@ if __name__=='__main__':
             
         cur = conn.cursor()
                
-        cur.execute("select count(*) from hisstocks where mtime=%s;"%hisdaytime)
+        cur.execute(sql_rtstock)
                  
         results = cur.fetchall()
                  

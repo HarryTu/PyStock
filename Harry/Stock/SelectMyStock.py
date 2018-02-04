@@ -13,79 +13,84 @@ import LoggerFactory
 import DBDataHandle
 
 
-def SelectJJStock( dboper, logger):
-    
-    sql_rtstock = "select code from rtstocks"
-    check_sql="select code from mystocks where mtype=0"
-
-    selectData = dboper.queryData(sql_rtstock)
-    checkData = dboper.queryData( check_sql )
-   
-    stockData ={}
-    codelist = []
-    
-    if checkData is not None:
-        
-        for data in checkData:
-             
-            codelist.append(data[0])
-    
-    for code in selectData:
-        
-        if checkExist( code[0], codelist ):
-            
-            logger.info("%s This stock already exists in the table mystocks..." % data[0])
-            
-        else:
-        
-            sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias \
-                            from stocks a, rtstocks b where a.code=b.code and b.code='%s'" % code  
-            
-            sql_jjstock = "select cashin, cashout, netvalue, price from rtjjstocks \
-                            where code='%s'" % code  
-            
-            mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
-            
-            stockData = {}
-            jjstockData = {}
-        
-            logger.debug( sql_mystock )
-            logger.debug( sql_jjstock )
-            
-            rtData = dboper.queryOneData( sql_mystock )
-            jjData = dboper.queryOneData( sql_jjstock )
-            
-            if rtData is not None and jjData is not None:
-                
-                stockData['code']= rtData[0]
-                stockData['name'] = rtData[1]
-                stockData['cashin'] = rtData[2]
-                stockData['cashout'] = rtData[3]
-                stockData['initnetvalue'] = rtData[4]
-                stockData['netvalue'] = rtData[4]
-                stockData['iorate'] = rtData[5]
-                stockData['price'] = rtData[6]
-                stockData['turnover'] = rtData[7]
-                stockData['initchangeratio'] = rtData[8]
-                stockData['changeratio'] = rtData[8]
-                stockData['amountp'] = rtData[9]
-                stockData['amountn'] = rtData[10]
-                stockData['codealias'] = rtData[11]
-                stockData['mtype'] = 0
-          
-                jjData = dboper.queryOneData( sql_jjstock )
-                jjstockData['price'] = jjData[3]
-              
-              
-                if (stockData['price'] - jjstockData['price']) > 0:
-                    
-                    logger.info("Inserting a new Stock %s during bidding..." % stockData['code'])
-                    DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
+# def SelectJJStock( dboper, logger):
+#     
+#     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+#     
+#     sql_rtstock = "select code from rtstocks where mtime >= %s" % mytime
+#     check_sql="select code from mystocks where mtype=0"
+# 
+#     selectData = dboper.queryData(sql_rtstock)
+#     checkData = dboper.queryData( check_sql )
+#    
+#     stockData ={}
+#     codelist = []
+#     
+#     if checkData is not None:
+#         
+#         for data in checkData:
+#              
+#             codelist.append(data[0])
+#     
+#     for code in selectData:
+#         
+#         if checkExist( code[0], codelist ):
+#             
+#             logger.info("%s This stock already exists in the table mystocks..." % data[0])
+#             
+#         else:
+#         
+#             sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias \
+#                             from stocks a, rtstocks b where a.code=b.code and b.code='%s'" % code  
+#             
+#             sql_jjstock = "select cashin, cashout, netvalue, price from rtjjstocks \
+#                             where code='%s'" % code  
+#             
+#             mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
+#             
+#             stockData = {}
+#             jjstockData = {}
+#         
+#             logger.debug( sql_mystock )
+#             logger.debug( sql_jjstock )
+#             
+#             rtData = dboper.queryOneData( sql_mystock )
+#             jjData = dboper.queryOneData( sql_jjstock )
+#             
+#             if rtData is not None and jjData is not None:
+#                 
+#                 stockData['code']= rtData[0]
+#                 stockData['name'] = rtData[1]
+#                 stockData['cashin'] = rtData[2]
+#                 stockData['cashout'] = rtData[3]
+#                 stockData['initnetvalue'] = rtData[4]
+#                 stockData['netvalue'] = rtData[4]
+#                 stockData['iorate'] = rtData[5]
+#                 stockData['price'] = rtData[6]
+#                 stockData['turnover'] = rtData[7]
+#                 stockData['initchangeratio'] = rtData[8]
+#                 stockData['changeratio'] = rtData[8]
+#                 stockData['amountp'] = rtData[9]
+#                 stockData['amountn'] = rtData[10]
+#                 stockData['codealias'] = rtData[11]
+#                 stockData['mtype'] = 0
+#           
+#                 jjData = dboper.queryOneData( sql_jjstock )
+#                 jjstockData['price'] = jjData[3]
+#               
+#               
+#                 if (stockData['price'] - jjstockData['price']) > 0:
+#                     
+#                     logger.info("Inserting a new Stock %s during bidding..." % stockData['code'])
+#                     DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
 
 
 def SelectJJStock_New( dboper, logger):
     
-    sql_rtstock = "select code from rtstocks"
+    mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
+    sql_rtstock = "select code from rtstocks where mtime >= %s" % mytimequery
+    
     check_sql="select code from mystocks where mtype=0"
 
     selectData = dboper.queryData(sql_rtstock)
@@ -102,68 +107,79 @@ def SelectJJStock_New( dboper, logger):
              
             codelist.append(data[0])
     
-    for code in selectData:
+    if selectData is not None and len(selectData)>0:
         
-        if checkExist( code[0], codelist ):
+        for code in selectData:
             
-            logger.info("%s This stock already exists in the table mystocks..." % data[0])
-            
-        else:
-        
-            sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias \
-                            from stocks a, rtstocks b where a.code=b.code and b.code='%s'" % code[0]  
-            
-            sql_hisstock = "select cashin, cashout, netvalue, price from hisstocks \
-                            where code='%s' and mtime=%s" %(code[0], hisdaytime)  
-            
-            mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
-            
-            stockData = {}
-            stockHisData = {}
-        
-            logger.debug( sql_mystock )
-            logger.debug( sql_hisstock )
-            
-            rtData = dboper.queryOneData( sql_mystock )
-            hisData = dboper.queryOneData( sql_hisstock )
-            
-            if rtData is not None and hisData is not None:
+            if checkExist( code[0], codelist ):
                 
-                stockData['code']= rtData[0]
-                stockData['name'] = rtData[1]
-                stockData['cashin'] = rtData[2]
-                stockData['cashout'] = rtData[3]
-                stockData['initnetvalue'] = rtData[4]
-                stockData['netvalue'] = rtData[4]
-                stockData['iorate'] = rtData[5]
-                stockData['price'] = rtData[6]
-                stockData['turnover'] = rtData[7]
-                stockData['initchangeratio'] = rtData[8]
-                stockData['changeratio'] = rtData[8]
-                stockData['amountp'] = rtData[9]
-                stockData['amountn'] = rtData[10]
-                stockData['codealias'] = rtData[11]
-                stockData['mtype'] = 0
-          
-                stockHisData['price'] = hisData[3]
-              
-              
-                if (stockData['price'] - stockHisData['price']) > 0:
+                logger.info("%s This stock already exists in the table mystocks..." % data[0])
+                
+            else:
+            
+                sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias \
+                                from stocks a, rtstocks b where a.code=b.code and b.code='%s'" % code[0]  
+                
+                sql_hisstock = "select cashin, cashout, netvalue, price, turnover from hisstocks \
+                                where code='%s' and mtime=%s" %(code[0], hisdaytime)  
+                
+                mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
+                
+                stockData = {}
+                stockHisData = {}
+            
+                logger.debug( sql_mystock )
+                logger.debug( sql_hisstock )
+                
+                rtData = dboper.queryOneData( sql_mystock )
+                hisData = dboper.queryOneData( sql_hisstock )
+                
+                if rtData is not None and hisData is not None:
                     
-                    logger.info("Inserting a new Stock %s during bidding..." % stockData['code'])
-                    DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
+                    stockData['code']= rtData[0]
+                    stockData['name'] = rtData[1]
+                    stockData['cashin'] = rtData[2]
+                    stockData['cashout'] = rtData[3]
+                    stockData['initnetvalue'] = rtData[4]
+                    stockData['netvalue'] = rtData[4]
+                    stockData['iorate'] = rtData[5]
+                    stockData['price'] = rtData[6]
+                    stockData['turnover'] = rtData[7]
+                    stockData['initchangeratio'] = rtData[8]
+                    stockData['changeratio'] = rtData[8]
+                    stockData['amountp'] = rtData[9]
+                    stockData['amountn'] = rtData[10]
+                    stockData['codealias'] = rtData[11]
+                    stockData['mtype'] = 0
+              
+                    stockHisData['price'] = hisData[3]
+                    stockHisData['price'] = hisData[2]
+                  
+                  
+                    if stockData['turnover']>2 and stockData['cashin']>=50 and stockData['netvalue']>=50:
+                        
+                        logger.info("Inserting a new Stock %s during bidding..." % stockData['code'])
+                        DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
 
-
+    else:
+        
+        logger.error("There is no data selected from rtstocks") 
+            
+            
+            
 def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, changerate=2, iorate=1.4, amountp=1000, netvaluemin=1000 ):
     
+    mytimeqeury = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
     select_sql = "select a.code,a.name,b.cashin,b.cashout,b.netvalue,b.iorate,b.turnover,b.price,b.changeratio,b.amountp,b.amountn, a.codealias from stocks a, rtstocks b \
-            where a.code=b.code and b.iorate>=%0.2f and b.amountp>=%0.2f and b.changeratio > %0.2f and( circulated >= %0.2f and circulated <= %0.2f) and b.netvalue >= %0.2f" \
-            %(iorate,amountp,changerate,circulatedMin,circulatedMax,netvaluemin)
+            where a.code=b.code and b.iorate>=%0.2f and b.amountp>=%0.2f and b.changeratio > %0.2f and( circulated >= %0.2f and circulated <= %0.2f) and b.netvalue >= %0.2f and b.mtime >=%s" \
+            %(iorate,amountp,changerate,circulatedMin,circulatedMax,netvaluemin,mytimeqeury)
     
     check_sql="select code from mystocks where mtype=1"
     
     stockData ={}
     codelist = []
+    
     
     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
     
@@ -247,39 +263,37 @@ if __name__ == '__main__':
     
     dboper = DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("SelectMyStock")
-    
-    SelectJJStock_New(dboper, logger)
-#     SelectJJStock(dboper, logger)
+
+#     SelectJJStock_New(dboper, logger)
 #     SelectMyStock(dboper, logger)
 
-
-#     while True:
-#            
-#         mytime = int(time.strftime("%H%M%S"))
-#           
-#         if ( 92000 <= mytime < 92600 ):
-#             
-#             SelectJJStock(dboper, logger)
-#                
-#             time.sleep(2)
-#         
-#         elif ( 93000 <= mytime <= 113030 ) or ( 130000 <= mytime <= 150030 ):
-#                
-#             SelectMyStock(dboper, logger)
-#                
-#             time.sleep(2)
-#         
-#         elif( mytime < 90000 or mytime > 150100):
-#                 
-# #                 logger.info("不在交易时间...退出程序!")
-#             logger.info("Out of trade time now...exit!")
-#                
-#             break
-#          
-#         else: 
-#                
-# #                 logger.info("休息时间。。。")
-#             logger.info("It's not in trade time yet, waiting for market to open!!")
-#             time.sleep(30)
+    while True:
+             
+        mytime = int(time.strftime("%H%M%S"))
+            
+        if ( 92000 <= mytime < 92600 ):
+              
+            SelectJJStock_New(dboper, logger)
+                 
+            time.sleep(2)
+          
+        elif ( 93000 <= mytime <= 113030 ) or ( 130000 <= mytime <= 150030 ):
+                 
+            SelectMyStock(dboper, logger)
+                 
+            time.sleep(2)
+          
+        elif( mytime < 90000 or mytime > 150100):
+                  
+#                 logger.info("不在交易时间...退出程序!")
+            logger.info("Out of trade time now...exit!")
+                 
+            break
+           
+        else: 
+                 
+#                 logger.info("休息时间。。。")
+            logger.info("It's not in trade time yet, waiting for market to open!!")
+            time.sleep(30)
     
     

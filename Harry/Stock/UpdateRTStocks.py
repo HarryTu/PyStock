@@ -139,31 +139,31 @@ if "__name__ == __main__(input)":
         
         circulated = 1800000
         
-        while True:
-            HandleRTStock(logger, input, circulated)
-         
 #         while True:
-#           
-#             mytime = int(time.strftime("%H%M%S"))
-#              
-#             if ( 92010 <= mytime <= 113200 ) or ( 130000 <= mytime <= 150200 ):
-#                   
-#                 HandleRTStock(logger, input, circulated)
-#                   
-#                 time.sleep(1)
-#            
-#             elif( mytime < 90000 or mytime > 150200):
-#                    
-# #                 logger.info("不在交易时间...退出程序!")
-#                 logger.info("Out of trade time...exit!")
-#                   
-#                 break
-#             
-#             else: 
-#                   
-# #                 logger.info("休息时间。。。")
-#                 logger.info("It's not in trade time yet, waiting for market to open!!")
-#                 time.sleep(30)
+#             HandleRTStock(logger, input, circulated)
+         
+        while True:
+           
+            mytime = int(time.strftime("%H%M%S"))
+              
+            if ( 92010 <= mytime <= 113200 ) or ( 130000 <= mytime <= 150200 ):
+                   
+                HandleRTStock(logger, input, circulated)
+                   
+                time.sleep(1)
+            
+            elif( mytime < 90000 or mytime > 150200):
+                    
+#                 logger.info("不在交易时间...退出程序!")
+                logger.info("Out of trade time...exit!")
+                   
+                break
+             
+            else: 
+                   
+#                 logger.info("休息时间。。。")
+                logger.info("It's not in trade time yet, waiting for market to open!!")
+                time.sleep(30)
         
              
     

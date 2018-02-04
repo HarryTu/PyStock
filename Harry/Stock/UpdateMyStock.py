@@ -11,7 +11,7 @@ import StockDataByTX
 import LoggerFactory
 import time
 import DBDataHandle
-# import threading
+import threading
 
 
 def UpdateMyStock(dboper, logger):
@@ -89,9 +89,9 @@ if __name__=="__main__":
        
         if( 92000 <= mytime <= 113030 ) or ( 130000 <= mytime <= 150030 ):
             
-#             threading.Thread(target = UpdateMyStock, args=(dboper, logger)).start()
-#             time.sleep(0.2)
-            UpdateMyStock(dboper, logger)
+            threading.Thread(target = UpdateMyStock, args=(dboper, logger)).start()
+            time.sleep(0.5)
+#             UpdateMyStock(dboper, logger)
        
         elif( mytime < 90000 or mytime > 150100):
                
