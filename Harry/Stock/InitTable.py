@@ -61,20 +61,20 @@ def InitRTStocks( circulated, dboper, logger ):
     if codelist is not None and len(codelist) > 0:
             
             clear_sql = "delete from rtstocks"
-            clearjj_sql = "delete from rtjjstocks"
+#             clearjj_sql = "delete from rtjjstocks"
             
-            logger.info("Refresh old data in the rtstocks and rtjjstokcs tables.....")
+            logger.info("Refresh old data in the rtstocks tables.....")
             dboper.sqlExecute( clear_sql )
-            dboper.sqlExecute( clearjj_sql )
+#             dboper.sqlExecute( clearjj_sql )
             
-            logger.info("Initialing rtstocks and rtjjstokcs tables... There're %s stocks need to be handled"%len(codelist))
+            logger.info("Initialing rtstocks tables... There're %s stocks need to be handled"%len(codelist))
             
             for code in codelist:
                  
                 threading.Thread(target = InsertRT, args=(dboper, code[0], logger, mytime)).start()
-                time.sleep(0.08)
+                time.sleep(0.1)
     #
-            logger.info("Initing tables rtstocks and rtjjstokcs have been completed!")
+            logger.info("Initing tables rtstocks have been completed!")
     else: 
             
         logger.error("Failed to get Stocks list.....")
@@ -91,7 +91,7 @@ def InsertRT(dboper, code, logger, mytime):
         
         DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
         
-        DBDataHandle.InsertJJRTData(dboper, realtimeData, logger, mytime)
+#         DBDataHandle.InsertJJRTData(dboper, realtimeData, logger, mytime)
 
           
     else: 
@@ -118,10 +118,12 @@ if __name__ == '__main__':
     dboper= DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("InitRTStocks")
     
-    InitMyStocks(dboper, logger)
+#     file = 'C:/temp/stock_basic_list.csv'
+#     InitStockDB( file )
+#     InitMyStocks(dboper, logger)
     
 #     begintime = datetime.datetime.now()
-#     InitRTStocks(circulated, dboper, logger)
+    InitRTStocks(circulated, dboper, logger)
 # endtime = datetime.datetime.now()
             
 #     logger.error("rtstocks has been updated. Spent time: %s"% str((endtime-begintime).seconds))

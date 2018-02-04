@@ -330,7 +330,7 @@ def logic():
 
 if __name__=='__main__':
     
-    print ""
+#     print ""
 #     data = GetStockBasicData('sh603299')
 #     
 # #     for i in range(0,len(data)):
@@ -347,11 +347,11 @@ if __name__=='__main__':
 #     print data['volume_amout']
 #     print data['turnover_rate']    
     
-#     file = 'C:/temp/stock_basic_list.csv'
+    file = 'C:/temp/stock_basic_list.csv'
 #     
 #     logger = LoggerFactory.getLogger("Testing")
 # #     realtimeData = CollectRealTimeData('sz002129', logger)
-#     DonwloadAllStockBasic( file )
+    DonwloadAllStockBasic( file )
 #  
 #     initStockDB( file )
 #     stockBasicData = GetStockBasicData('sz000022',logger )
