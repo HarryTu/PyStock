@@ -11,9 +11,9 @@ import StockDataByTX
 import time
 import DBDataHandle
 import threading
+import datetime
 
-
-def initStockDB( file ):
+def InitStockDB( file ):
     
     logger = LoggerFactory.getLogger("InitStockDB")
     loggerBasicData = LoggerFactory.getLogger("GetStockBasicData")
@@ -61,21 +61,23 @@ def InitRTStocks( circulated, dboper, logger ):
     if codelist is not None and len(codelist) > 0:
             
             clear_sql = "delete from rtstocks"
+            clearjj_sql = "delete from rtjjstocks"
             
-            logger.info("清除rtstocks表中旧数据.....")
+            logger.info("Refresh old data in the rtstocks and rtjjstokcs tables.....")
             dboper.sqlExecute( clear_sql )
+            dboper.sqlExecute( clearjj_sql )
             
-            logger.info("初始化RTStock表...总有 %s只股票需要处理!!"%len(codelist))
+            logger.info("Initialing rtstocks and rtjjstokcs tables... There're %s stocks need to be handled"%len(codelist))
             
             for code in codelist:
                  
                 threading.Thread(target = InsertRT, args=(dboper, code[0], logger, mytime)).start()
-                time.sleep(0.2)
+                time.sleep(0.08)
     #
-            logger.info("初始化RTStock表完成!")
+            logger.info("Initing tables rtstocks and rtjjstokcs have been completed!")
     else: 
             
-        logger.error("股票代码列表信息获取失败.....")
+        logger.error("Failed to get Stocks list.....")
 
 
 
@@ -85,13 +87,16 @@ def InsertRT(dboper, code, logger, mytime):
       
     if realtimeData is not None: 
         
-        logger.info("正在处理: %s" % realtimeData['code'])
+        logger.info("Inserting the stock: %s" % realtimeData['code'])
         
         DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
+        
+        DBDataHandle.InsertJJRTData(dboper, realtimeData, logger, mytime)
+
           
     else: 
           
-        logger.error("股票: %s 的相关信息获取失败..." % code)  
+        logger.error("Fetching the stock information failed. code: %s ." % code)  
 
 
 
@@ -99,11 +104,11 @@ def InitMyStocks( dboper, logger ):
     
     sql = "delete from mystocks"
     
-    logger.info("初始化MyStocks表....")
+    logger.info("Initialing MyStocks table....")
     
     dboper.sqlExecute(sql)
     
-    logger.info("MyStocks表初始化完成!")
+    logger.info("Initialing MyStocks has completed!")
 
 
 if __name__ == '__main__':
@@ -113,7 +118,13 @@ if __name__ == '__main__':
     dboper= DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("InitRTStocks")
     
-    InitRTStocks(circulated, dboper, logger)
-    
     InitMyStocks(dboper, logger)
+    
+#     begintime = datetime.datetime.now()
+#     InitRTStocks(circulated, dboper, logger)
+# endtime = datetime.datetime.now()
+            
+#     logger.error("rtstocks has been updated. Spent time: %s"% str((endtime-begintime).seconds))
+
+    
     

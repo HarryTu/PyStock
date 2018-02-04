@@ -1,3 +1,5 @@
+# -*- coding=UTF-8 -*-
+
 '''
 Created on 20180124
 
@@ -6,6 +8,10 @@ Created on 20180124
 
 import logging
 import time 
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 def getLogger(name):
     
@@ -36,7 +42,7 @@ def getLogger(name):
         
         logger.addHandler( console_handler )
 #         logger.addHandler( logfile_handler )
-        logger.setLevel( logging.INFO )
+        logger.setLevel( logging.ERROR )
         
         return logger
     

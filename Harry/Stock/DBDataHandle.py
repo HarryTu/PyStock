@@ -18,10 +18,9 @@ def InsertHisData( dboper, stockdata, logger ):
         
     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
                     
-    sql = "insert into hisstocks(code, cashin, cashout, netvalue, iorate, turnover, price, changeratio, amountp, acountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
+    sql = "insert into hisstocks(code, cashin, cashout, netvalue, iorate, turnover, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
             %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['iorate'], stockdata['turnover'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
 
-    
     logger.debug( sql )
     
 #     dboper = DBOperation.DBOperation()
@@ -41,7 +40,20 @@ def InsertRTData( dboper, stockdata, logger, mytime ):
 #     dboper = DBOperation.DBOperation()
     
     dboper.sqlExecute(sql)
- 
+
+
+def InsertJJRTData( dboper, stockdata, logger, mytime ):
+                    
+    sql = "insert into rtjjstocks(code, cashin, cashout, netvalue, iorate, turnover, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
+            %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['iorate'], stockdata['turnover'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
+
+    
+    logger.debug( sql )
+    
+#     dboper = DBOperation.DBOperation()
+    
+    dboper.sqlExecute(sql)
+
 
 def UpdateRTData( dboper, stockdata, logger, mytime ):
                     
@@ -73,10 +85,26 @@ def UpdateMyStock( dboper, stockData, logger, mytime ):
 
 def InsertMyStock( dboper, stockData, logger, mytime ):
                     
-    sql = "insert into mystocks(code, name, cashin, cashout, initnetvalue, iorate, turnover, price, initchangeratio, amountp, amountn, inittime, codealias)\
-                 values('%s', '%s', '%0.2f', '%0.2f', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s' )" \
-        %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], \
-          stockData['iorate'], stockData['turnover'], stockData['price'], stockData['initchangeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'] )  
+#     print stockData['code']
+#     print stockData['name']
+#     print stockData['cashin']
+#     print stockData['cashout']
+#     print stockData['initnetvalue']
+#     print stockData['netvalue']
+#     print stockData['iorate']
+#     print stockData['turnover']
+#     print stockData['price']
+#     print stockData['initchangeratio']
+#     print stockData['changeratio']
+#     print stockData['amountp']
+#     print stockData['amountn']
+#     print mytime
+#     print stockData['codealias']
+                    
+
+    sql = "insert into mystocks(code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, price, initchangeratio, changeratio, amountp, amountn, inittime, codealias, mtype)\
+                 values('%s', '%s', '%0.2f', '%0.2f', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s', %d)" \
+        %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], stockData['netvalue'], stockData['iorate'], stockData['turnover'], stockData['price'], stockData['initchangeratio'], stockData['changeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'], stockData['mtype'])  
                 
     
     logger.debug( sql )

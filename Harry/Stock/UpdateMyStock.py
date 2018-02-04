@@ -11,6 +11,7 @@ import StockDataByTX
 import LoggerFactory
 import time
 import DBDataHandle
+# import threading
 
 
 def UpdateMyStock(dboper, logger):
@@ -26,7 +27,7 @@ def UpdateMyStock(dboper, logger):
     
     if results is not None and len(results) > 0:
         
-        logger.info("开始更新股票池中股票信息...")
+        logger.info("Starting to update stocks in the pool...")
         
         for code in results: 
              
@@ -57,51 +58,51 @@ def UpdateMyStock(dboper, logger):
                         realtimeData['amountp'] = stockBriefData['amountp']
                         realtimeData['amountn'] = stockBriefData['amountn']
                         
-                        logger.info("开始更新股票: %s" %stockBasicData['name'])
+                        logger.info("Starting to update stock: %s" %stockBasicData['name'])
                         DBDataHandle.UpdateMyStock(dboper, realtimeData, logger, mytime)
                     
                     else:
                         
-                        logger.error("Data collection stockBriefData is Null....")   
+                        logger.error("Data collection stockBriefData is Null. code: %s"%code[0])   
                 
                 else:
                     
-                    logger.error("Data collection stockCashData is Null....")
+                    logger.error("Data collection stockCashData is Null. code: %s"%code[0])
                     
             else: 
                 
-                logger.error("Data collection stockBasicData is Null....")
+                logger.error("Data collection stockBasicData is Null. code: %s"%code[0])
     else: 
         
-        logger.info("股票池中没有股票信息....")   
+        logger.info("There is no Stocks in the pool yet....Waiting for auto select!")   
 
 
 if __name__=="__main__":
     
     dboper = DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("MyStockUpdate")        
-    
+
 #     UpdateMyStock(dboper, logger)
     while True:
-        
-        mytime = int(time.strftime("%H%M%S"))
-        
-        if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
-             
+         
+        mytime = int(time.strftime("%H%M%S"))      
+       
+        if( 92000 <= mytime <= 113030 ) or ( 130000 <= mytime <= 150030 ):
+            
+#             threading.Thread(target = UpdateMyStock, args=(dboper, logger)).start()
+#             time.sleep(0.2)
             UpdateMyStock(dboper, logger)
-             
-            time.sleep(1)
-      
-        elif( mytime < 93000 or mytime > 150100):
-              
+       
+        elif( mytime < 90000 or mytime > 150100):
+               
 #                 logger.info("不在交易时间...退出程序!")
             logger.info("Out of trade time now...exit!")
-             
+              
             break
-       
+        
         else: 
-             
+              
 #                 logger.info("休息时间。。。")
-            logger.info("In the rest time....waiting for trade market reopen afternoon")
-            time.sleep(60)
+            logger.info("It's not in trade time yet, waiting for market to open!!")
+            time.sleep(30)
         

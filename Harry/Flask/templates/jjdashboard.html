@@ -1,0 +1,45 @@
+  <meta charset = "utf-8" />
+  	<p>集合竞价关注</p>
+	<table id='table-jj'>
+	     <thead>
+	         <th>股票代码</th> 
+	         <th>股票名称</th>
+	         <th>大单净额(万)</th>
+	         <th>当前成交额(万)</th>
+	         <th>上榜涨幅</th>
+	         <th>当前涨幅</th>
+	         <th>当前价格</th>
+	     </thead>	
+
+      {% for data in stocks %}
+          <tr>
+              <td>{{data['code']}}</td>
+              <td>{{data['name']}}</td>
+              <td>{{data['netvalue']}}</td>
+              <td>{{data['amountp']}}</td>
+              <td class='checkjjvalue'>{{data['initchangeratio']}}</td>
+              <td class='checkjjvalue'>{{data['changeratio']}}</td>
+              <td>{{data['price']}}</td>
+          </tr>
+      {% endfor %}
+
+ 	 </table>
+  
+ <script type="text/javascript">
+	 $(function () {
+		 
+		 $("td.checkjjvalue").each(function () {
+			 if (($(this).text()) > 0){
+				 
+				$(this).html($(this).text()+"%").css({color:"red"})
+				
+			 }else{
+				
+				$(this).html($(this).text()+"%").css({color:"green"})
+				
+			 }
+		 });
+	
+	 });
+ </script>
+  

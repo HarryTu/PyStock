@@ -44,36 +44,44 @@ def HandleRTStock( logger, stocktype, circulated=1800000 ):
         for code in rtstocks: 
             rtstockslist.append(code[0])
         
-        if stocktype == "sz":
-            
-            logger.info("将更新深市股票信息.....")
-            codelist_sql="select codealias from stocks where codealias like '%s' and status=1 and circulated<= %0.2f" % ("sz%", circulated )
-        
         if stocktype == "sh":
             
-            logger.info("将更新沪市股票信息.....")
+            logger.info("Updating stock information in SH marketing.....")
             codelist_sql="select codealias from stocks where codealias like '%s' and status=1 and circulated<= %0.2f" % ("sh%", circulated )
+        
+        if stocktype == "sz":
             
-            
+            logger.info("Updating stock information in SZ marketing.....")
+            codelist_sql="select codealias from stocks where codealias like '%s' and status=1 and circulated<= %0.2f" % ("sz%", circulated )
+   
         results = dboper.queryData( codelist_sql ) 
       
         if results is not None and len(results) > 0:
+            
+            logger.info("Starting to update rtstocks....")
+            
+            begintime = datetime.datetime.now()
             
             for code in results:
             
                 if checkExist( code[0][2:8], rtstockslist ):
                     
-                    logger.info("RT表已有股票:%s 信息,将做更新..."%code[0])
+                    logger.debug("The stock %s already exists in the rtstocks, will perform update information"%code[0])
                     
                     threading.Thread(target = UpdateRT, args=(dboper, code[0], logger, mytime)).start()
-                    time.sleep(0.1)
+                    time.sleep(0.07)
                     
                 else:
                     
-                    logger.info("RT表无股票:%s 信息,将插入新值..."%code[0])
-                         
-                    InsertRT(dboper, code[0], logger, mytime)
-                    
+                    logger.debug("The stock %s DOES NOT exist in the rtstocks, will insert stock information!"%code[0])
+#                     InsertRT(dboper, code[0], logger, mytime)
+                    threading.Thread(target = InsertRT, args=(dboper, code[0], logger, mytime)).start()    
+                    time.sleep(0.1)
+             
+            endtime = datetime.datetime.now()
+            
+            logger.info("rtstocks has been updated. Spent time: %s"% str((endtime-begintime).seconds))
+#             print (endtime-begintime).seconds     
         
 
 def UpdateRT(dboper, code, logger, mytime):
@@ -82,7 +90,7 @@ def UpdateRT(dboper, code, logger, mytime):
   
     if realtimeData is not None: 
     
-        logger.info("正在处理: %s" % realtimeData['code'])
+        logger.debug("Updating the stock %s" % realtimeData['code'])
         
         DBDataHandle.UpdateRTData(dboper, realtimeData, logger, mytime)
         
@@ -95,13 +103,13 @@ def InsertRT(dboper, code, logger, mytime):
                   
     if realtimeData is not None: 
     
-        logger.info("正在处理: %s" % realtimeData['code'])
+        logger.info("Insert the stock %s to rtstocks" % realtimeData['code'])
         
         DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
     
     else: 
         
-        logger.error("股票: %s, 数据获取失败!!!"%code)
+        logger.error("Fetching the stock information failed. code: %s ..."%code)
             
 
 
@@ -118,12 +126,12 @@ if "__name__ == __main__(input)":
     
 #     input = raw_input()
 
-#     input = sys.argv[1]
-    input = 'sz'
+    input = sys.argv[1]
+#     input = 'sh'
          
     if input is None or input not in('sh','sz'):
          
-        print "输入股票市场号码:'sh' 或者 'sz'"
+        print "Input marketing type 'sh' or 'sz'"
          
     else:
         
@@ -131,30 +139,31 @@ if "__name__ == __main__(input)":
         
         circulated = 1800000
         
-#         HandleRTStock(logger, input, circulated)
-         
         while True:
+            HandleRTStock(logger, input, circulated)
          
-            mytime = int(time.strftime("%H%M%S"))
-            
-            if ( 93000 < mytime < 113000 ) or ( 130000 < mytime < 150030 ):
-                 
-                HandleRTStock(logger, input, circulated)
-                 
-                time.sleep(1)
-          
-            elif( mytime < 93000 or mytime > 150100):
-                  
-#                 logger.info("不在交易时间...退出程序!")
-                logger.info("Out of trade time...exit!")
-                 
-                break
-           
-            else: 
-                 
-#                 logger.info("休息时间。。。")
-                logger.info("In the rest time....waiting for trade market reopen afternoon")
-                time.sleep(60)
+#         while True:
+#           
+#             mytime = int(time.strftime("%H%M%S"))
+#              
+#             if ( 92010 <= mytime <= 113200 ) or ( 130000 <= mytime <= 150200 ):
+#                   
+#                 HandleRTStock(logger, input, circulated)
+#                   
+#                 time.sleep(1)
+#            
+#             elif( mytime < 90000 or mytime > 150200):
+#                    
+# #                 logger.info("不在交易时间...退出程序!")
+#                 logger.info("Out of trade time...exit!")
+#                   
+#                 break
+#             
+#             else: 
+#                   
+# #                 logger.info("休息时间。。。")
+#                 logger.info("It's not in trade time yet, waiting for market to open!!")
+#                 time.sleep(30)
         
              
     

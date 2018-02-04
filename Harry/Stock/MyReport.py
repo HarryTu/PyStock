@@ -10,6 +10,7 @@ import DBOperation
 import time
 import sys
 import os
+from copy import deepcopy 
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -80,7 +81,7 @@ def Test():
 def GetMyStockReport(dboper):
     
     sql = "select code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, \
-            initchangeratio, changeratio, amountp,inittime from mystocks order by changeratio" 
+            initchangeratio, changeratio, amountp,inittime,price from mystocks where mtype=1 order by changeratio desc" 
     
     
     stocklist = []
@@ -96,12 +97,16 @@ def GetMyStockReport(dboper):
             stockData['name'] = stock[1]
             stockData['initnetvalue'] = stock[4]
             stockData['netvalue'] = stock[5]
-            stockData['inittime'] = stock[11]
+            stockData['iorate'] = stock[6]
+            stockData['turnover'] = stock[7]
             stockData['initchangeratio'] = stock[8]
             stockData['changeratio'] = stock[9]
+            stockData['amountp'] = stock[10]            
+            stockData['inittime'] = stock[11].strftime('%H:%M:%S')
+            stockData['price'] = stock[12]
  
         
-            stocklist.append(stockData) 
+            stocklist.append(deepcopy(stockData)) 
         
         return stocklist
     
@@ -110,7 +115,35 @@ def GetMyStockReport(dboper):
         return None
     
     
+def GetJJMyStockReport(dboper):
+    
+    sql = "select code, name, netvalue, amountp, initchangeratio, changeratio, price from mystocks where mtype=0 order by changeratio desc" 
 
+    stocklist = []
+    
+    results = dboper.queryData(sql)
+    
+    if results is not None and len(results)>0:
+        
+        for stock in results: 
+            
+            stockData = {}
+            stockData['code'] = stock[0]
+            stockData['name'] = stock[1]  
+            stockData['netvalue'] = stock[2]
+            stockData['amountp'] = stock[3]
+            stockData['initchangeratio'] = stock[4]
+            stockData['changeratio'] = stock[5]
+            stockData['price'] = stock[6]
+                        
+            stocklist.append(deepcopy(stockData)) 
+        
+        return stocklist
+    
+    else: 
+        
+        return None
+    
 if __name__ == '__main__':
             
     dboper = DBOperation.DBOperation()

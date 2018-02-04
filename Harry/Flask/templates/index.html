@@ -4,38 +4,115 @@
 <!--  <script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script> -->
 <script type="text/javascript" src="{{url_for('static',filename='js/lib/jquery-1.8.3.min.js')}}"></script>
 
+<style type="text/css">
+
+/* Table Head */
+#table-7 thead th, #table-jj thead th {
+	background-color: rgb(81, 130, 187);
+	color: #fff;
+}
+
+/* Column Style */
+#table-7, #table-jj {
+	border-collapse:collapse;
+}
+
+#table-7 td, #table-jj td {
+	border-bottom: solid 1px rgb(0,0,0);
+}
+
+/* Heading and Column Style */
+#table-7 th, #table-7 jj {
+	background-color: rgb(81, 130, 187);
+	border-color: rgb(81, 130, 187);
+}
+
+/* Padding and font style */
+#table-7 td, #table-7 th, #table-jj td, #table-jj th {
+padding: 5px 10px;
+font-size: 14px;
+font-family: Verdana;
+font-weight: bold;
+}
+
+#dashboard_jj{
+    width:35%;
+    float:left;
+}
+#dashboard_center{
+    width:5%;
+}
+
+#dashboard_mystock{
+    width:60%;
+    float:right;
+}
+
+p {
+	font-size: 16px;
+	font-family: Verdana;
+	font-weight: bold;}
+
+</style>
+
 </head>
 <body>
 
-<div id="dashboard">
+
+<div id="dashboard_jj">
+
+</div>
+      	
+
+
+<div id="dashboard_center">
+		
+</div>
+
+<div id="dashboard_mystock">
 		
 </div>
 
 <script type="text/javascript">
  
 $(document).ready(function(){
-setInterval("startRequest()",1000);
+setInterval("startRequest()",2000);
 });
 	 
  function startRequest(){
+  
   $.ajax({
+	     url: "/jjdashboard",
+	     type: "get",
+	     data1:{ },
+	     timeout: 5000,
+	     success: function(data1,textStatus, jqXHR) {
+	    	 
+	    	 $("#dashboard_jj").html(data1);
+	    	 
+	     },
+		     error : function(jqXHR, textStatus, errorThrown){  
+		     alert(jqXHR + "," + textStatus + "," + errorThrown);  
+	     }
+	   });
+ 
+ $.ajax({
      url: "/dashboard",
      type: "get",
-     data:{ },
-     timeout: 1000,
-     success: function(data,textStatus, jqXHR) {
-       $("#dashboard").html(data);
+     data2:{},
+     timeout: 5000,
+     success: function(data2,textStatus,jqXHR) {
+
+    	 $("#dashboard_mystock").html(data2);
+    	 
      },
 	     error : function(jqXHR, textStatus, errorThrown){  
-	     alert(jqXHR + "," + textStatus + "," + errorThrown);  
-     }
+		 alert(jqXHR + "," + textStatus + "," + errorThrown);  
+	 }
    });
-  }
+ }
 
 </script>
-
- 
-	
 
 
 </body>

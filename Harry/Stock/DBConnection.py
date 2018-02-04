@@ -10,6 +10,7 @@ from DBUtils import PooledDB
 import pymysql
 import string
 import LoggerFactory
+import datetime
 
 class DBConnection:
 
@@ -63,22 +64,26 @@ class DBConnection:
 if __name__=='__main__':
 
     sqldbhandle = DBConnection()
-     
+      
     pool = sqldbhandle.CreateConnectionPool()
-   
+    
+    hisdaytime = "str_to_date('%s'," % (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
     if pool is not None: 
-        
+         
         conn = pool.connection()
-           
+            
         cur = conn.cursor()
-              
-        cur.execute("select * from test;")
-                
+               
+        cur.execute("select count(*) from hisstocks where mtime=%s;"%hisdaytime)
+                 
         results = cur.fetchall()
-                
+                 
         print results 
-                
+                 
         cur.close()
         conn.close()
-#     
-#     CreateConnection();
+     
+
+    
+

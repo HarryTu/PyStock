@@ -27,17 +27,17 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
-def GetStockData(dataUrl):
+def GetStockData(dataUrl, logger):
     
     r = urllib2.Request(dataUrl)
     
     try:
         
-        data = urllib2.urlopen(r, data=None, timeout=3)
+        data = urllib2.urlopen(r, data=None, timeout=2)
         
     except Exception,e:
         
-        print "getDataFromUrl error...Retrying!!!"   
+        logger.error("GetDataFromUrl error.... URL: %s"%dataUrl)   
             
         return None
       
@@ -55,7 +55,7 @@ def GetStockBasicData(code, logger):
     
     logger.debug("GetStockBasicData_URL: %s" % url)
     
-    data = GetStockData( url )
+    data = GetStockData( url, logger )
     
 #     print data[53].split(';')[0]
     
@@ -122,7 +122,7 @@ def GetStockCashData(code,logger):
     logger.debug("GetStockCashData_url: %s" % url)
     stockCashData = {}
     
-    data = GetStockData( url )
+    data = GetStockData( url, logger )
       
     if data is not None and len(data) > 1:
         
@@ -162,7 +162,7 @@ def GetStockBriefData(code, logger):
     
     stockBriefData = {}
     
-    data = GetStockData( url )
+    data = GetStockData( url, logger )
           
     if data is not None and len(data) > 1:
         
