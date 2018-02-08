@@ -117,10 +117,10 @@ def SelectJJStock_New( dboper, logger):
                 
             else:
             
-                sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias \
+                sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias, b.qrratio \
                                 from stocks a, rtstocks b where a.code=b.code and b.code='%s'" % code[0]  
                 
-                sql_hisstock = "select cashin, cashout, netvalue, price, turnover from hisstocks \
+                sql_hisstock = "select cashin, cashout, netvalue, price, turnover, qrratio from hisstocks \
                                 where code='%s' and mtime=%s" %(code[0], hisdaytime)  
                 
                 mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
@@ -150,6 +150,7 @@ def SelectJJStock_New( dboper, logger):
                     stockData['amountp'] = rtData[9]
                     stockData['amountn'] = rtData[10]
                     stockData['codealias'] = rtData[11]
+                    stockData['qrratio'] = rtData[12]
                     stockData['mtype'] = 0
               
                     stockHisData['price'] = hisData[3]
