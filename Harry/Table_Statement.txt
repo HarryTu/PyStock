@@ -11,7 +11,6 @@ lyr float,
 mtime datetime
 );
 
-alter table stocks add primary key(code);
 
 create table rtstocks(
 code varchar(7),
@@ -29,7 +28,6 @@ mtime datetime
 
 );
 
-alter table rtstocks add primary key(code,mtime);
 
 
 create table jjstocks(
@@ -47,18 +45,16 @@ mystatus int,
 mtime datetime		
 );
 
-alter table jjstocks add primary key(code);
 
 
 create table jjtemp(
 code varchar(7),
-codealias varchar(10),
 initprice float, 
 price float,
 initturnover float, 
-turnover float,
-mtime datetime
+turnover float
 )
+
 
 
 create table mystocks(
@@ -76,13 +72,10 @@ initchangeratio float,
 changeratio float,
 amountp float,
 amountn float,
-mtype int,					
+mtype int,				#1:代表竞价时，价格在被打高  0:默认值，没有实际意义			
 mtime datetime,
 inittime datetime
 );
-
-alter table mystocks add primary key(code,mtype);
-
 
 
 create table hisstocks(

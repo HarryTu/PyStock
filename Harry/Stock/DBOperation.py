@@ -52,18 +52,21 @@ class DBOperation:
                 cursor.close()
                 
                 conn.close()
+                
+                return True
             
             except Exception, e:
                 
                 conn.rollback()
                 
                 self.logger.error("SQL statement execution failed!" + "\n" + "Error message: " + str(e) + "\n" + sql )
-        
+                
+                return False
         else: 
             
             self.logger.error("Cannot get DB connection!")
             
-            return None
+            return False
         
         
     def queryData(self, sql):

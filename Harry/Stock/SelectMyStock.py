@@ -167,7 +167,7 @@ def SelectJJStock_New( dboper, logger):
             
             
             
-def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=600000, changerate=2, iorate=1.4, amountp=1000, netvaluemin=1000 ):
+def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=800000, changerate=1, iorate=1.4, amountp=1000, netvaluemin=1000 ):
     
     mytimeqeury = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
     
@@ -271,7 +271,7 @@ if __name__ == '__main__':
              
         mytime = int(time.strftime("%H%M%S"))
             
-        if ( 92000 <= mytime < 92600 ):
+        if ( 92520 <= mytime < 92950 ):
               
             SelectJJStock_New(dboper, logger)
                  

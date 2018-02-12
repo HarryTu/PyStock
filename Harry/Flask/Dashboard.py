@@ -8,8 +8,8 @@ Created on 20180201
 
 from flask import Flask, request, render_template
 
-import sys
-sys.path.append("C:\Harry\My Working\GitHub\PyStock\Harry\Stock\DBOperation")
+# import sys
+# sys.path.append("C:\Harry\My Working\GitHub\PyStock\Harry\Stock\DBOperation")
 
 import Harry.Stock.DBOperation as DBOperation
 import Harry.Stock.MyReport as MyReport
@@ -70,6 +70,6 @@ def jjdashboard():
 
 if __name__=="__main__":
 
-    app.run(host="192.168.1.3")
+    app.run("10.35.83.34")
     
 

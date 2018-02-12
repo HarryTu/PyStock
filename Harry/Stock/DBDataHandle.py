@@ -55,6 +55,32 @@ def InsertJJRTData( dboper, stockdata, logger, mytime ):
     dboper.sqlExecute(sql)
 
 
+def InsertJJTemp( dboper, stockdata, logger, mytime ):
+                    
+    sql = "insert into jjtemp(code, codealias, initprice, price, initturnover, turnover, mtime)  values('%s', '%s', %0.2f, %0.2f, %0.2f, %0.2f, %s)" \
+            %(stockdata['code'], stockdata['codealias'], stockdata['price'], stockdata['price'], stockdata['turnover'], stockdata['turnover'], mytime) 
+
+    
+    logger.debug( sql )
+    
+#     dboper = DBOperation.DBOperation()
+    
+    dboper.sqlExecute(sql)
+
+
+def UpdateJJTemp( dboper, stockdata, logger, mytime ):
+                    
+    sql = "update jjtemp set price=%0.2f, turnover=%0.2f, mtime=%s where code='%s'" \
+            %(stockdata['price'], stockdata['turnover'], mytime, stockdata['code']) 
+
+    
+    logger.debug( sql )
+    
+#     dboper = DBOperation.DBOperation()
+    
+    dboper.sqlExecute(sql)
+
+
 def UpdateRTData( dboper, stockdata, logger, mytime ):
                     
     sql = "update rtstocks set cashin=%0.2f, cashout=%0.2f, netvalue=%0.2f, iorate=%0.2f, turnover=%0.2f, price=%0.2f, changeratio=%0.2f, amountp=%0.2f, amountn=%0.2f, mtime=%s where code='%s'" \
