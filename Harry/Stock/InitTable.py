@@ -118,12 +118,12 @@ if __name__ == '__main__':
     dboper= DBOperation.DBOperation()
     logger = LoggerFactory.getLogger("InitRTStocks")
     
-#     file = 'C:/temp/stock_basic_list.csv'
-#     InitStockDB( file )
+    file = 'C:/temp/stock_basic_list.csv'
+    InitStockDB( file )
 #     InitMyStocks(dboper, logger)
     
 #     begintime = datetime.datetime.now()
-    InitRTStocks(circulated, dboper, logger)
+#     InitRTStocks(circulated, dboper, logger)
 # endtime = datetime.datetime.now()
             
 #     logger.error("rtstocks has been updated. Spent time: %s"% str((endtime-begintime).seconds))

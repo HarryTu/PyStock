@@ -112,6 +112,55 @@ def HandleRTStock( dboper, logger, stocktype, circulated=1800000 ):
             logger.info("rtstocks has been updated. Spent time: %s"% str((endtime-begintime).seconds))
 #             print (endtime-begintime).seconds     
         
+        
+def InsertJJStock(dboper, code, logger, mytime):
+
+
+    realtimeData = StockDataByTX.CollectRealTimeData(code, logger) 
+                  
+    if realtimeData is not None: 
+    
+        logger.info("Insert the stock %s to jjstocks" % realtimeData['code'])
+        
+#         DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
+        DBDataHandle.InsertJJStock(dboper, realtimeData, logger, mytime)
+    
+    else: 
+        
+        logger.error("Fetching the stock information failed. code: %s ..."%code)
+
+
+
+def HandleJJStock( dboper, logger, stocktype, circulated=1800000 ):  
+ 
+#     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
+    mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
+    if stocktype == "sh":
+         
+        logger.info("Inserting jjstock information in SH marketing.....")
+        codelist_sql="select codealias from stocks where codealias like '%s' and status=1 and circulated<= %0.2f" % ("sh%", circulated )
+     
+    if stocktype == "sz":
+         
+        logger.info("Inserting jjstock information in SZ marketing.....")
+        codelist_sql="select codealias from stocks where codealias like '%s' and status=1 and circulated<= %0.2f" % ("sz%", circulated )
+
+    results = dboper.queryData( codelist_sql )
+    
+    if results is not None and len(results) > 0:
+        
+        for code in results: 
+            
+            logger.debug("will insert stock information! stock code: %s"%code[0])
+#                     InsertRT(dboper, code[0], logger, mytime)
+            threading.Thread(target = InsertJJStock, args=(dboper, code[0], logger, mytime)).start()    
+            
+            time.sleep(0.1)
+
+    else: 
+        
+        logger.error("There is no stock list retrieved...")
 
 
 
@@ -149,9 +198,9 @@ def UpdateJJTemp(dboper, code, logger, mytime):
 
 def InitJJTemp(dboper,logger, stocktype, circulated):
     
-    sql_clear = "delete from jjtemp"
-    results = dboper.sqlExecute(sql_clear)
-    
+#     sql_clear = "delete from jjtemp"
+#     results = dboper.sqlExecute(sql_clear)
+    results = True
     if results: 
     
         mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
@@ -176,7 +225,7 @@ def InitJJTemp(dboper,logger, stocktype, circulated):
     #                     InsertRT(dboper, code[0], logger, mytime)
                 threading.Thread(target = InsertJJTemp, args=(dboper, code[0], logger, mytime)).start()    
                 
-                time.sleep(0.1)
+                time.sleep(0.07)
     
         else: 
             
@@ -231,8 +280,8 @@ if "__name__ == __main__(input)":
     
 #     input = raw_input()
 
-#     input = sys.argv[1]
-    input = 'sz'
+    input = sys.argv[1]
+#     input = 'sz'
          
     if input is None or input not in('sh','sz'):
          
@@ -246,51 +295,60 @@ if "__name__ == __main__(input)":
         
         dboper = DBOperation.DBOperation()
         
-        counter = 0
+        counter20 = 0
+        
+        counter25 = 0 
 
         
 #         InitJJTemp(dboper,logger, input, circulated)
 #         HandleJJTemp(dboper,logger, input)
-         
+#         HandleJJStock(dboper,logger, input, circulated)
+        
 #         while True:
 #             HandleRTStock(logger, input, circulated)
-     
+      
         while True:
-            
+              
             mytime = int(time.strftime("%H%M%S"))
-            
-            if (92000 <= mytime < 92500 ):
-                
-                if counter < 1: 
-                    
+              
+            if (92000 <= mytime < 92500):
+                  
+                if counter20 < 1: 
+                      
                     InitJJTemp(dboper,logger, input, circulated)
-                    counter = counter + 1
-                    
-                elif counter >= 1: 
-                    
+                    counter20 = counter20 + 1
+                      
+                elif counter20 >= 1: 
+                      
                     HandleJJTemp(dboper, logger, input)
                     time.sleep(1)
-                      
-            elif ( 92501 <= mytime <= 113200 ) or ( 130000 <= mytime <= 150200 ):
+                        
+            elif ( 92500 <= mytime < 93000 ):
                  
+                if counter25 < 1:
+                    HandleJJStock( dboper, logger, input, circulated )
+                    counter25 = counter25 + 1
+                 
+            elif ( 93001 <= mytime <= 113200 ) or ( 130000 <= mytime <= 150200 ):
+                   
                 print "starting update"
                 HandleRTStock(dboper, logger, input, circulated)
-                    
+                      
                 time.sleep(1)
-             
+               
             elif( mytime < 90000 or mytime > 150200):
-                     
+                       
 #                 logger.info("不在交易时间...退出程序!")
                 logger.info("Out of trade time...exit!")
-                    
+                      
                 break
-              
+                
             else: 
-                    
+                      
 #                 logger.info("休息时间。。。")
                 logger.info("It's not in trade time yet, waiting for market to open!!")
-                time.sleep(30)
-#         
+                time.sleep(5)
+         
 
              
     

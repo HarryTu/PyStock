@@ -42,10 +42,10 @@ def InsertRTData( dboper, stockdata, logger, mytime ):
     dboper.sqlExecute(sql)
 
 
-def InsertJJRTData( dboper, stockdata, logger, mytime ):
+def InsertJJStock( dboper, stockdata, logger, mytime ):
                     
-    sql = "insert into rtjjstocks(code, cashin, cashout, netvalue, iorate, turnover, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
-            %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['iorate'], stockdata['turnover'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
+    sql = "insert into jjstocks(code, cashin, cashout, netvalue, qrratio, turnover, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
+            %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['qrratio'], stockdata['turnover'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
 
     
     logger.debug( sql )

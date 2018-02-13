@@ -38,18 +38,16 @@ code varchar(7),
 cashin float,
 cashout float,
 netvalue float,
-iorate float,
 turnover float,
 qrratio float,
 price float,
 changeratio float,
 amountp float,
 amountn float,
-mystatus int,
 mtime datetime		
 );
 
-alter table jjstocks add primary key(code);
+alter table jjstocks add primary key(code,mtime);
 
 
 create table jjtemp(

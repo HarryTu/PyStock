@@ -350,19 +350,19 @@ if __name__=='__main__':
 #     print data['volume_amout']
 #     print data['turnover_rate']    
     
-#     file = 'C:/temp/stock_basic_list.csv'
+    file = 'C:/temp/stock_basic_list.csv'
 #     
     logger = LoggerFactory.getLogger("Testing")
 # #     realtimeData = CollectRealTimeData('sz002129', logger)
 #     DonwloadAllStockBasic( file )
 #  
 #     initStockDB( file )
-    stockData = CollectRealTimeData('sh600159',logger )
+#     stockData = CollectRealTimeData('sh600159',logger )
 #     #当前成交量
 #     print stockBasicData['price'] 
 #     #当前价格
 #     print stockBasicData['mount']
-    print stockData['qrratio']
+#     print stockData['qrratio']
 #     if stockBasicData['price'] == 0 and stockBasicData['mount'] == 0:
 #         print "stop"
 #     else:
