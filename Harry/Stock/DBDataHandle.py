@@ -57,8 +57,8 @@ def InsertJJStock( dboper, stockdata, logger, mytime ):
 
 def InsertJJTemp( dboper, stockdata, logger, mytime ):
                     
-    sql = "insert into jjtemp(code, codealias, initprice, price, initturnover, turnover, mtime)  values('%s', '%s', %0.2f, %0.2f, %0.2f, %0.2f, %s)" \
-            %(stockdata['code'], stockdata['codealias'], stockdata['price'], stockdata['price'], stockdata['turnover'], stockdata['turnover'], mytime) 
+    sql = "insert into jjtemp(code, codealias, initprice, price, initchangeratio, changeratio, mtime)  values('%s', '%s', %0.2f, %0.2f, %0.2f, %0.2f, %s)" \
+            %(stockdata['code'], stockdata['codealias'], stockdata['price'], stockdata['price'], stockdata['changeratio'], stockdata['changeratio'], mytime) 
 
     
     logger.debug( sql )
@@ -70,8 +70,8 @@ def InsertJJTemp( dboper, stockdata, logger, mytime ):
 
 def UpdateJJTemp( dboper, stockdata, logger, mytime ):
                     
-    sql = "update jjtemp set price=%0.2f, turnover=%0.2f, mtime=%s where code='%s'" \
-            %(stockdata['price'], stockdata['turnover'], mytime, stockdata['code']) 
+    sql = "update jjtemp set price=%0.2f, changeratio=%0.2f, mtime=%s where code='%s'" \
+            %(stockdata['price'], stockdata['changeratio'], mytime, stockdata['code']) 
 
     
     logger.debug( sql )
@@ -130,7 +130,8 @@ def InsertMyStock( dboper, stockData, logger, mytime ):
 
     sql = "insert into mystocks(code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, qrratio, price, initchangeratio, changeratio, amountp, amountn, inittime, codealias, mtype)\
                  values('%s', '%s', '%0.2f', '%0.2f', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s', %d)" \
-        %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], stockData['netvalue'], stockData['iorate'], stockData['turnover'], stockData['qrratio'], stockData['price'], stockData['initchangeratio'], stockData['changeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'], stockData['mtype'])  
+        %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], stockData['netvalue'], \
+          stockData['iorate'], stockData['turnover'], stockData['qrratio'], stockData['price'], stockData['initchangeratio'], stockData['changeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'], stockData['mtype'])  
                 
     
     logger.debug( sql )

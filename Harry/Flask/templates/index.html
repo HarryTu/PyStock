@@ -1,49 +1,41 @@
 <html>
 <head>
 <meta charset = "utf-8" />
+
 <!--  <script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script> -->
 <script type="text/javascript" src="{{url_for('static',filename='js/lib/jquery-1.8.3.min.js')}}"></script>
 
 <style type="text/css">
 
+/* Column Style */
+#dashboard-header {
+	border-collapse:collapse;
+}
+
 /* Table Head */
-#table-7 thead th, #table-jj thead th {
+#dashboard-header thead th {
 	background-color: rgb(81, 130, 187);
 	color: #fff;
 }
 
-/* Column Style */
-#table-7, #table-jj {
-	border-collapse:collapse;
-}
-
-#table-7 td, #table-jj td {
+#dashboard-header td, #table-mystock td {
 	border-bottom: solid 1px rgb(0,0,0);
 }
 
-/* Heading and Column Style */
-#table-7 th, #table-7 jj {
-	background-color: rgb(81, 130, 187);
-	border-color: rgb(81, 130, 187);
-}
-
 /* Padding and font style */
-#table-7 td, #table-7 th, #table-jj td, #table-jj th {
+#dashboard-header th, #table-mystock td{
 padding: 5px 10px;
-font-size: 10px;
+font-size: 12px;
 font-family: Verdana;
 font-weight: bold;
 }
 
-#dashboard_jj{
-    width:40%;
-    float:left;
+#table-mystock {
+	border-collapse:collapse;
 }
 
-
-#dashboard_mystock{
-    width:60%;
-    float:right;
+#table-mystock td {
+	border-bottom: solid 1px rgb(0,0,0);
 }
 
 p {
@@ -51,24 +43,72 @@ p {
 	font-family: Verdana;
 	font-weight: bold;}
 
+#main{
+    width:100%;
+    height: 200px;
+    overflow:hidden;
+}
+
+#main dashboard_jj{
+    width:45%;
+    float:left;
+	border: 1px solid gray;
+	overflow: auto;    
+}
+
+#main dashboard_selfselect{
+	width: 45%;
+    float: left;
+	border: 1px solid gray;
+	overflow: auto;    
+}
+
+#dashboard_mystock{
+	height: 400px;
+	float: left;
+    border: 1px solid gray;
+	overflow: auto;  
+}
+
 </style>
 
 </head>
 <body>
 
+<div id="main">
 
-<div id="dashboard_jj">
-
+	<div id="dashboard_jj">
+	
+	</div>
+	
+	<div id="dashboard_selfselect">
+			
+	</div>
 </div>
-      	
 
-
-<div id="dashboard_center">
+<div >
+	<div id="dashboard_div">
+		<p>交易时间上榜标的</p>
+		  <table id='dashboard-header'> 
+		      <thead>
+		         <th>股票代码</th> 
+		         <th>股票名称</th>
+		         <th>上榜时间</th>
+		         <th>上榜净额(万)</th>
+		         <th>当前净额(万)</th>
+		         <th>大单额出入比</th>
+		         <th>换手率</th>
+		         <th>当前成交额(万)</th>
+		         <th>上榜涨幅</th>
+		         <th>当前涨幅</th>   
+		         <th>当前价格</th>         
+		     	</thead>
+		    </table>
+	   </div>
+		<div id="dashboard_mystock">
 		
-</div>
+		</div>   
 
-<div id="dashboard_mystock">
-		
 </div>
 
 <script type="text/javascript">

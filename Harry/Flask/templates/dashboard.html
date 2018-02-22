@@ -1,19 +1,5 @@
   <meta charset = "utf-8" />
-  <p>交易时间上榜标的</p>
-  <table id='table-7'> 
-      <thead>
-         <th>股票代码</th> 
-         <th>股票名称</th>
-         <th>上榜时间</th>
-         <th>上榜净额(万)</th>
-         <th>当前净额(万)</th>
-         <th>大单额出入比</th>
-         <th>换手率</th>
-         <th>当前成交额(万)</th>
-         <th>上榜涨幅</th>
-         <th>当前涨幅</th>   
-         <th>当前价格</th>         
-     	</thead>
+  <table id="table-mystock"> 
 	      {% for data in stocks %}
 	          <tr>
 	              <td>{{data['code']}}</td>

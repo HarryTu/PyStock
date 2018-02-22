@@ -18,7 +18,7 @@ def InitStockDB( file ):
     logger = LoggerFactory.getLogger("InitStockDB")
     loggerBasicData = LoggerFactory.getLogger("GetStockBasicData")
     
-    codelist = StockDataByTX.GetAllStockCode( file )
+    stocklist = StockDataByTX.GetAllStockCode( file )
     
     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')" 
     
@@ -26,7 +26,9 @@ def InitStockDB( file ):
     
     counter = 0
     
-    for code in codelist:
+    for stock in stocklist:
+        
+        code = stock['code']
         
         stockBasicData = StockDataByTX.GetStockBasicData( code,loggerBasicData )
         
@@ -39,8 +41,8 @@ def InitStockDB( file ):
             else:
                 status = 1
             
-            sql = "insert into stocks(code, codealias, name, scope, circulated, totalstock, status, peg, lyr, mtime)  values('%s', '%s', '%s', '%s', %0.2f, %0.2f, %d, %0.2f, %0.2f, %s )" \
-                    %(stockBasicData['code'], stockBasicData['codealias'], stockBasicData['name'], stockBasicData['scope'], stockBasicData['circulated_stock'], \
+            sql = "insert into stocks(code, codealias, name, industry, circulated, totalstock, status, peg, lyr, mtime)  values('%s', '%s', '%s', '%s', %0.2f, %0.2f, %d, %0.2f, %0.2f, %s )" \
+                    %(stockBasicData['code'], stockBasicData['codealias'], stockBasicData['name'], stock['industry'], stockBasicData['circulated_stock'], \
                       stockBasicData['total_stock'], status, stockBasicData['peg'], stockBasicData['lyr'], mytime)            
             
             dboper.sqlExecute( sql )

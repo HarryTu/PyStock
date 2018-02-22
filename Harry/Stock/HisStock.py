@@ -13,6 +13,7 @@ import DBOperation
 import threading
 import time
 import datetime
+import tushare as ts
 
 
 def DailyHisData(dboper):
@@ -50,7 +51,11 @@ def InsertHisData(code,dboper,logger):
 
 if "__name == __main__":
     
-    dboper = DBOperation.DBOperation()
-    DailyHisData(dboper)   
-    
+#     dboper = DBOperation.DBOperation()
+#     DailyHisData(dboper)
+
+   td = ts.get_realtime_quotes('600519')
+   
+   for i in td: 
+       print i
     

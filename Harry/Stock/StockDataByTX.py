@@ -49,8 +49,6 @@ def GetStockBasicData(code, logger):
     baseurl = "http://qt.gtimg.cn/q="
     url = baseurl + code
     
-#     print url
-    
     stockBasicData = {}
     
     logger.debug("GetStockBasicData_URL: %s" % url)
@@ -272,29 +270,37 @@ def DonwloadAllStockBasic( FilePath ):
         
 def GetAllStockCode( FilePath ):
     
-    codelist = []
-        
+    stocklist = []
+ 
     csvFile = open( FilePath,'r')
               
     reader = csv.reader( csvFile )
            
     for item in reader: 
                
+        basicInfo = {}
+        
         if reader.line_num == 1:
                               
             continue
         
         if item[0][0:1] == '0' or item[0][0:1] == '3':    
             codename = 'sz' + item[0] 
-            codelist.append(codename)
-        
-        if item[0][0:1] == '6':
+            basicInfo['code'] = codename
+            
+        elif item[0][0:1] == '6':
             codename = 'sh' + item[0]
-            codelist.append(codename)
+            basicInfo['code'] = codename
         
-        exit 
+        else:
+            codename = '00000000'
+            basicInfo['code'] = codename
         
-    return codelist
+        basicInfo['industry'] = item[2]
+        
+        stocklist.append(basicInfo)
+        
+    return stocklist
 
 
 def CollectData( file ):
@@ -354,7 +360,7 @@ if __name__=='__main__':
 #     
     logger = LoggerFactory.getLogger("Testing")
 # #     realtimeData = CollectRealTimeData('sz002129', logger)
-#     DonwloadAllStockBasic( file )
+    DonwloadAllStockBasic( file )
 #  
 #     initStockDB( file )
 #     stockData = CollectRealTimeData('sh600159',logger )
@@ -369,35 +375,5 @@ if __name__=='__main__':
 #         print "nornal"
 #     stockCashData = NULL
 #     stockBasicData = NULL
-#     loggerBasicData = LoggerFactory.getLogger("GetStockBasicData")
-    
-    
-#     while True:
-#         
-# #         stockCashData = GetStockCashData('sz002129')
-# #                 
-# #         print time.strftime('%Y-%m-%d %H:%M:%S')
-# #         print "流入: %s,  流出: %s,  净额: %s "%(stockCashData['main_in_cash'], stockCashData['main_out_cash'], stockCashData['netcash'])
-# #         
-#         stockBasicData = GetStockBasicData('sz002129',loggerBasicData)
-#         
-#         print time.strftime('%Y-%m-%d %H:%M:%S') 
-#         print "换手率: %s" % stockBasicData['turnover_rate']
-#         time.sleep(30) 
-        
-        
-#         logger = LoggerFactory.getLogger("Testing")
-#     
-#         realtimeData = CollectRealTimeData('sz002129',logger)
-#         
-#     print realtimeData['code']
-#     print realtimeData['price']
-#     print realtimeData['cashin']
-#     print realtimeData['cashout']
-#     print realtimeData['netvalue']
-#     print realtimeData['changeratio']
-#     print realtimeData['turnover']
-#     print realtimeData['iorate']
-#     print realtimeData['amountp']
-#     print realtimeData['amountn']
+
         
