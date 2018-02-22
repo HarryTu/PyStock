@@ -18,7 +18,7 @@ def InsertHisData( dboper, stockdata, logger ):
         
     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
                     
-    sql = "insert into hisstocks(code, cashin, cashout, netvalue, iorate, turnover, qrratio, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
+    sql = "insert into hisstocks(code, cashin, cashout, netvalue, iorate, turnover, qrratio, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
             %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['iorate'], stockdata['turnover'], stockdata['qrratio'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
 
     logger.debug( sql )

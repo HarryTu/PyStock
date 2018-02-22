@@ -27,7 +27,6 @@ amountp float,
 amountn float,
 mystatus int,
 mtime datetime
-
 );
 
 alter table rtstocks add primary key(code,mtime);
@@ -60,6 +59,7 @@ changeratio float,
 mtime datetime
 )
 
+alter table jjtemp add primary key(code)
 
 create table mystocks(
 code varchar(7),
