@@ -13,7 +13,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-def getLogger(name):
+def __getLogger(name):
     
     now = time.strftime('%Y-%m-%d %H:%M:%S')
     
@@ -32,32 +32,55 @@ def getLogger(name):
     
     try: 
         
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter( formatter )
+        handler = logging.StreamHandler()
+        handler.setFormatter( formatter )
             
 #         logfile_handler = logging.FileHandler( logfile )
 #         logfile_handler.setFormatter( formatter )
 
         logger = logging.getLogger(name)
         
-        logger.addHandler( console_handler )
+        logger.addHandler( handler )
 #         logger.addHandler( logfile_handler )
         logger.setLevel( logging.INFO )
         
-        return logger
+        return logger, handler
     
     except Exception, e: 
         
         print "Logger factory creation failed with error message:" +"\n" + str(e) 
         
         return None
+
+
+def debug(name, msg):
     
+    logger, handler = __getLogger(name)
+    
+    logger.debug(msg)
+    
+    logger.removeHandler(handler)
+    
+
+def info(name, msg):
+    
+    logger, handler = __getLogger(name)
+    
+    logger.info(msg)
+    
+    logger.removeHandler(handler)
+    
+
+def error(name, msg):
+    
+    logger, handler = __getLogger(name)
+    
+    logger.error(msg)
+    
+    logger.removeHandler(handler)    
+        
 
 if __name__ == '__main__':
     
-    logger = getLogger('DBOperation')
-    
-    if logger is not None: 
-        
-        logger.error("this is a test")
+   print ""
     

@@ -13,10 +13,12 @@ import DBDataHandle
 import threading
 import datetime
 
+
+
 def InitStockDB( file ):
     
-    logger = LoggerFactory.getLogger("InitStockDB")
-    loggerBasicData = LoggerFactory.getLogger("GetStockBasicData")
+#     logger = LoggerFactory.getLogger("InitStockDB")
+#     loggerBasicData = LoggerFactory.getLogger("GetStockBasicData")
     
     stocklist = StockDataByTX.GetAllStockCode( file )
     
@@ -30,11 +32,12 @@ def InitStockDB( file ):
         
         code = stock['code']
         
-        stockBasicData = StockDataByTX.GetStockBasicData( code,loggerBasicData )
+        stockBasicData = StockDataByTX.GetStockBasicData( code )
         
         if stockBasicData is not None: 
             
-            logger.info("正在处理:  %s" % stockBasicData['name'])
+            LoggerFactory.info("InitStockDB", "正在处理:  %s" % stockBasicData['name'])
+#             logger.info("正在处理:  %s" % stockBasicData['name'])
             
             if stockBasicData['mount'] == 0:
                 status = 0
@@ -49,11 +52,12 @@ def InitStockDB( file ):
             
             counter = counter + 1
     
-    logger.info("Stock DB initialization has completed! There're %s Stocks created into the Database!" % str(counter))      
+    LoggerFactory.info("InitStockDB", "Stock DB initialization has completed! There're %s Stocks created into the Database!" % str(counter))
+#     logger.info("Stock DB initialization has completed! There're %s Stocks created into the Database!" % str(counter))      
 
 
 
-def InitRTStocks( circulated, dboper, logger ):
+def InitRTStocks( circulated, dboper ):
     
     sql = "select codealias from stocks where status=1 and circulated<= %0.2f" % circulated
     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
@@ -65,52 +69,60 @@ def InitRTStocks( circulated, dboper, logger ):
             clear_sql = "delete from rtstocks"
 #             clearjj_sql = "delete from rtjjstocks"
             
-            logger.info("Refresh old data in the rtstocks tables.....")
+            LoggerFactory.info("InitRTStocks", "Refresh old data in the rtstocks tables.....")
+#             logger.info("Refresh old data in the rtstocks tables.....")
             dboper.sqlExecute( clear_sql )
 #             dboper.sqlExecute( clearjj_sql )
             
-            logger.info("Initialing rtstocks tables... There're %s stocks need to be handled"%len(codelist))
+            LoggerFactory.info("InitRTStocks", "Initialing rtstocks tables... There're %s stocks need to be handled"%len(codelist))
+#             logger.info("Initialing rtstocks tables... There're %s stocks need to be handled"%len(codelist))
             
             for code in codelist:
                  
-                threading.Thread(target = InsertRT, args=(dboper, code[0], logger, mytime)).start()
+                threading.Thread(target = InsertRT, args=(dboper, code[0], mytime)).start()
                 time.sleep(0.1)
-    #
-            logger.info("Initing tables rtstocks have been completed!")
+    #        
+            LoggerFactory.info("InitRTStocks", "Initing tables rtstocks have been completed!")
+#             logger.info("Initing tables rtstocks have been completed!")
     else: 
-            
-        logger.error("Failed to get Stocks list.....")
+        
+        LoggerFactory.error("InitRTStocks", "Failed to get Stocks list.....")
+#         logger.error("Failed to get Stocks list.....")
 
 
 
-def InsertRT(dboper, code, logger, mytime):
+def InsertRT(dboper, code, mytime):
     
-    realtimeData = StockDataByTX.CollectRealTimeData(code, logger) 
+    realtimeData = StockDataByTX.CollectRealTimeData(code) 
       
     if realtimeData is not None: 
         
-        logger.info("Inserting the stock: %s" % realtimeData['code'])
+        LoggerFactory.info("InsertRT", "Inserting the stock: %s" % realtimeData['code'])
+#         logger.info("Inserting the stock: %s" % realtimeData['code'])
         
-        DBDataHandle.InsertRTData(dboper, realtimeData, logger, mytime)
+        DBDataHandle.InsertRTData(dboper, realtimeData, mytime)
         
 #         DBDataHandle.InsertJJRTData(dboper, realtimeData, logger, mytime)
 
           
     else: 
-          
-        logger.error("Fetching the stock information failed. code: %s ." % code)  
+        
+        LoggerFactory.error("InsertRT", "Fetching the stock information failed. code: %s ." % code)
 
 
 
-def InitMyStocks( dboper, logger ):
+
+def InitMyStocks( dboper ):
     
     sql = "delete from mystocks"
     
-    logger.info("Initialing MyStocks table....")
+    LoggerFactory.info("InitMyStocks", "Initialing MyStocks table....")
+#     logger.info("Initialing MyStocks table....")
     
     dboper.sqlExecute(sql)
     
-    logger.info("Initialing MyStocks has completed!")
+    LoggerFactory.info("InitMyStocks", "Initialing MyStocks has completed!")
+#     logger.info("Initialing MyStocks has completed!")
 
 
 if __name__ == '__main__':
@@ -118,7 +130,6 @@ if __name__ == '__main__':
     circulated = 1800000
     
     dboper= DBOperation.DBOperation()
-    logger = LoggerFactory.getLogger("InitRTStocks")
     
     file = 'C:/temp/stock_basic_list.csv'
     InitStockDB( file )

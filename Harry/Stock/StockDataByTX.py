@@ -27,7 +27,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
-def GetStockData(dataUrl, logger):
+def GetStockData(dataUrl):
     
     r = urllib2.Request(dataUrl)
     
@@ -37,23 +37,25 @@ def GetStockData(dataUrl, logger):
         
     except Exception,e:
         
-        logger.error("GetDataFromUrl error.... URL: %s"%dataUrl)   
+        LoggerFactory.error("GetStockData", "GetDataFromUrl error.... URL: %s"%dataUrl)
+#         logger.error("GetDataFromUrl error.... URL: %s"%dataUrl)   
             
         return None
       
     return data.read().decode('gbk').replace('"', '').split('~')
 
 
-def GetStockBasicData(code, logger):
+def GetStockBasicData(code):
     
     baseurl = "http://qt.gtimg.cn/q="
     url = baseurl + code
     
     stockBasicData = {}
     
-    logger.debug("GetStockBasicData_URL: %s" % url)
+    LoggerFactory.debug("GetStockBasicData", "GetStockBasicData_URL: %s" % url)
+#     logger.debug("GetStockBasicData_URL: %s" % url)
     
-    data = GetStockData( url, logger )
+    data = GetStockData( url )
     
 #     print data[53].split(';')[0]
     
@@ -100,12 +102,13 @@ def GetStockBasicData(code, logger):
         
         except Exception, e: 
             
-            logger.error("数据赋值部分错误: " + "\n" + str(e))
-            logger.debug("code: " + code[2:8])
-            logger.debug("circulated_stock: " + data[44])
-            logger.debug("total_stock: " + data[45])
-            logger.debug("peg: " + data[52])
-            logger.debug("lyr: " + data[53])
+            LoggerFactory.error("GetStockBasicData", "Set value error: " + "\n" + str(e))
+#             logger.error("Set value error: " + "\n" + str(e))
+#             logger.debug("code: " + code[2:8])
+#             logger.debug("circulated_stock: " + data[44])
+#             logger.debug("total_stock: " + data[45])
+#             logger.debug("peg: " + data[52])
+#             logger.debug("lyr: " + data[53])
             
             return None
         
@@ -114,15 +117,16 @@ def GetStockBasicData(code, logger):
         return None
 
 
-def GetStockCashData(code,logger):
+def GetStockCashData(code):
     
     baseurl = "http://qt.gtimg.cn/q=ff_"
     url = baseurl + code
     
-    logger.debug("GetStockCashData_url: %s" % url)
+    LoggerFactory.debug("GetStockCashData", "GetStockCashData_url: %s" % url)
+#     logger.debug("GetStockCashData_url: %s" % url)
     stockCashData = {}
     
-    data = GetStockData( url, logger )
+    data = GetStockData( url )
       
     if data is not None and len(data) > 1:
         
@@ -143,7 +147,8 @@ def GetStockCashData(code,logger):
         
         except Exception, e:
             
-            logger.error("数据赋值部分错误: " + "\n" + str(e))
+            LoggerFactory.error(GetStockCashData, "Set value error: " + "\n" + str(e))
+#             logger.error("Set value error: " + "\n" + str(e))
             
             return None
      
@@ -152,17 +157,18 @@ def GetStockCashData(code,logger):
         return None  
     
 
-def GetStockBriefData(code, logger):
+def GetStockBriefData(code):
     
     baseurl = "http://qt.gtimg.cn/q=s_"
     
     url = baseurl + code    
     
-    logger.debug("GetStockBriefData_url: %s" % url)
+    LoggerFactory.debug("GetStockBriefData", "GetStockBriefData_url: %s" % url)
+#     logger.debug("GetStockBriefData_url: %s" % url)
     
     stockBriefData = {}
     
-    data = GetStockData( url, logger )
+    data = GetStockData( url )
           
     if data is not None and len(data) > 1:
         
@@ -181,7 +187,8 @@ def GetStockBriefData(code, logger):
         
         except Exception, e: 
             
-            logger.error("数据赋值部分错误: " + "\n" + str(e))
+            LoggerFactory.error("GetStockBriefData", "Set value error" + "\n" + str(e))
+#             logger.error("Set value error" + "\n" + str(e))
             
             return None
     else:
@@ -189,13 +196,13 @@ def GetStockBriefData(code, logger):
         return None
 
 
-def CollectRealTimeData(code,logger):
+def CollectRealTimeData(code):
     
 #     logger = LoggerFactory("CollectRealTimeData")
     
-    stockBasicData = GetStockBasicData(code,logger)
-    stockCashData = GetStockCashData(code,logger)
-    stockBriefData = GetStockBriefData(code,logger)
+    stockBasicData = GetStockBasicData(code)
+    stockCashData = GetStockCashData(code)
+    stockBriefData = GetStockBriefData(code)
     
     realtimeData = {}
     
@@ -226,44 +233,49 @@ def CollectRealTimeData(code,logger):
                 
             else: 
                 
-                logger.debug("stockBriefData is null")
+                LoggerFactory.debug("CollectRealTimeData","stockBriefData is null")
+#                 logger.debug("stockBriefData is null")
                 
                 return None
         else: 
             
-            logger.debug("stockCashData is null")
+            LoggerFactory.debug("CollectRealTimeData","stockCashData is null")
+#             logger.debug("stockCashData is null")
             
             return None
     else:
             
-            logger.debug("stockBasicData is null")
+            LoggerFactory.debug("CollectRealTimeData","stockBasicData is null")
+#             logger.debug("stockBasicData is null")
             
             return None
 
 
 def DonwloadAllStockBasic( FilePath ):
     
-    logger = LoggerFactory.getLogger("DonwloadAllStockBasic")
-    
     if os.path.isfile( FilePath ):
         
         os.remove( FilePath )
         
-        logger.info("Will remove the old file and refresh stock list...........")
+        LoggerFactory.info("DonwloadAllStockBasic", "Will remove the old file and refresh stock list...........")
+#         logger.info("Will remove the old file and refresh stock list...........")
     
     try: 
         
-        logger.info("Starting new stock list download....")
+        LoggerFactory.info("DonwloadAllStockBasic", "Starting new stock list download....")
+#         logger.info("Starting new stock list download....")
         
         df = ts.get_stock_basics()
         
         df.to_csv( FilePath, encoding='utf-8' )
         
-        logger.info( "New stock list has been created successfully!" )
+        LoggerFactory.info("DonwloadAllStockBasic", "New stock list has been created successfully!")
+#         logger.info( "New stock list has been created successfully!" )
     
     except Exception, e:
         
-        logger.error("Creating new stock list failed by tushare, please check!!! ")
+        LoggerFactory.error("DonwloadAllStockBasic", "Creating new stock list failed by tushare, please check!!! ")
+#         logger.error("Creating new stock list failed by tushare, please check!!! ")
     
         exit
         
@@ -358,7 +370,6 @@ if __name__=='__main__':
     
     file = 'C:/temp/stock_basic_list.csv'
 #     
-    logger = LoggerFactory.getLogger("Testing")
 # #     realtimeData = CollectRealTimeData('sz002129', logger)
     DonwloadAllStockBasic( file )
 #  

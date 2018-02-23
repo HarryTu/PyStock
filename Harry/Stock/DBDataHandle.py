@@ -29,13 +29,14 @@ def InsertHisData( dboper, stockdata, logger ):
 
 
 
-def InsertRTData( dboper, stockdata, logger, mytime ):
+def InsertRTData( dboper, stockdata, mytime ):
                     
     sql = "insert into rtstocks(code, cashin, cashout, netvalue, iorate, turnover, qrratio, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
             %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['iorate'], stockdata['turnover'], stockdata['qrratio'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
 
     
-    logger.debug( sql )
+    LoggerFactory.debug("InsertRTData", sql)
+#     logger.debug( sql )
     
 #     dboper = DBOperation.DBOperation()
     
@@ -81,13 +82,14 @@ def UpdateJJTemp( dboper, stockdata, logger, mytime ):
     dboper.sqlExecute(sql)
 
 
-def UpdateRTData( dboper, stockdata, logger, mytime ):
+def UpdateRTData( dboper, stockdata, mytime ):
                     
     sql = "update rtstocks set cashin=%0.2f, cashout=%0.2f, netvalue=%0.2f, iorate=%0.2f, turnover=%0.2f, qrratio=%0.2f, price=%0.2f, changeratio=%0.2f, amountp=%0.2f, amountn=%0.2f, mtime=%s where code='%s'" \
             %(stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['iorate'], stockdata['turnover'], stockdata['qrratio'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime, stockdata['code']) 
 
     
-    logger.debug( sql )
+    LoggerFactory.debug("UpdateRTData", sql)
+#     logger.debug( sql )
     
 #     dboper = DBOperation.DBOperation()
     

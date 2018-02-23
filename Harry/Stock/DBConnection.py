@@ -27,7 +27,7 @@ class DBConnection:
         self.__maxshared = 3000 
         self.__maxconn = 3000 
         
-        self.logger = LoggerFactory.getLogger("DBConnection")
+#         self.logger = LoggerFactory.getLogger("DBConnection")
             
             
     def CreateConnectionPool(self):
@@ -42,7 +42,8 @@ class DBConnection:
          
         except Exception, e:
             
-            self.logger.error("Failed to create connection pool with exception: " + str(e) )
+            LoggerFactory.error("CreateConnectionPool", "Failed to create connection pool with exception: " + str(e))
+#             self.logger.error("Failed to create connection pool with exception: " + str(e) )
               
             return None
  
@@ -56,7 +57,8 @@ class DBConnection:
         
         except Exception, e: 
             
-            self.logger.error( "Failed to create DB connection with exception error: " + str(e) )
+            LoggerFactory.error("CreateConnection", "Failed to create DB connection with exception error: " + str(e))
+#             self.logger.error( "Failed to create DB connection with exception error: " + str(e) )
             
             return None
     

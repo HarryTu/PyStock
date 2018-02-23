@@ -14,9 +14,7 @@ from pip._vendor.distlib._backport.tarfile import TUREAD
 
 class DBOperation:
     
-    def __init__(self):
-        
-        self.logger = LoggerFactory.getLogger("DBOperation") 
+    def __init__(self): 
         
         self.pool = DBConnection.DBConnection().CreateConnectionPool()
         
@@ -29,8 +27,9 @@ class DBOperation:
             return True
         
         else:
-        
-            self.logger.error("Connection Pool is Null object, please check connection Pool creation!")
+            
+            LoggerFactory.error("poolvalidate", "Connection Pool is Null object, please check connection Pool creation!")
+#             self.logger.error("Connection Pool is Null object, please check connection Pool creation!")
                  
             return False
         
@@ -59,12 +58,14 @@ class DBOperation:
                 
                 conn.rollback()
                 
-                self.logger.error("SQL statement execution failed!" + "\n" + "Error message: " + str(e) + "\n" + sql )
+                LoggerFactory.error("sqlExecute", "SQL statement execution failed!" + "\n" + "Error message: " + str(e) + "\n" + sql)
+#                 self.logger.error("SQL statement execution failed!" + "\n" + "Error message: " + str(e) + "\n" + sql )
                 
                 return False
         else: 
             
-            self.logger.error("Cannot get DB connection!")
+            LoggerFactory.error("sqlExecute","Cannot get DB connection!")
+#             self.logger.error("Cannot get DB connection!")
             
             return False
         
@@ -75,7 +76,8 @@ class DBOperation:
         
         if conn is not None: 
             
-            self.logger.debug( sql )
+            LoggerFactory.debug("queryData", sql)
+#             self.logger.debug( sql )
              
             cursor = conn.cursor()
             cursor.execute( sql )
@@ -89,7 +91,8 @@ class DBOperation:
         
         else: 
             
-            self.logger.error("Cannot get DB connection!")
+            LoggerFactory.error("queryData", "Cannot get DB connection!")
+#             self.logger.error("Cannot get DB connection!")
             
             return None
         
@@ -112,7 +115,8 @@ class DBOperation:
         
         else: 
             
-            self.logger.error("Cannot get DB connection!")
+            LoggerFactory.error("queryOneData", "Cannot get DB connection!")
+#             self.logger.error("Cannot get DB connection!")
             
             return None       
             
