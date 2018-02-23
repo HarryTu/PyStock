@@ -1,16 +1,6 @@
   <meta charset = "utf-8" />
-  	<p>集合竞价关注</p>
-	<table id='table-jj'>
-	     <thead>
-	         <th>股票代码</th> 
-	         <th>股票名称</th>
-	         <th>大单净额(万)</th>
-	         <th>当前成交额(万)</th>
-	         <th>上榜涨幅</th>
-	         <th>当前涨幅</th>
-	         <th>当前价格</th>
-	     </thead>	
-
+	
+	<table id="table-jjstock">	
       {% for data in stocks %}
           <tr>
               <td>{{data['code']}}</td>
@@ -22,7 +12,6 @@
               <td>{{data['price']}}</td>
           </tr>
       {% endfor %}
-
  	 </table>
   
  <script type="text/javascript">
@@ -33,10 +22,13 @@
 				 
 				$(this).html($(this).text()+"%").css({color:"red"})
 				
-			 }else{
+			 }else if (($(this).text()) < 0){
 				
 				$(this).html($(this).text()+"%").css({color:"green"})
 				
+			 }else{
+				 
+				 $(this).html($(this).text()+"%").css({color:"black"})
 			 }
 		 });
 	

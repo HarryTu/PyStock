@@ -288,9 +288,9 @@ def checkExist(codename, codelist):
 if __name__ == '__main__':
     
     dboper = DBOperation.DBOperation()
-    logger = LoggerFactory.getLogger("SelectMyStock")
 
-    SelectJJStock_New(dboper, logger)
+
+
 #     SelectMyStock(dboper, logger)
 
 

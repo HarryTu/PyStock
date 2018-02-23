@@ -6,16 +6,10 @@ Created on 20180127
 @author: Harry
 '''
 
-import LoggerFactory
-import time
+import tushare as ts
 
+print ts.get_concept_classified()
 
-
-for i in range(0,5):
-    
-    
-    LoggerFactory.info("test", "test" + str(i))
-    time.sleep(2)
-    
+#view-source:http://basic.10jqka.com.cn/300140/concept.html
     
     

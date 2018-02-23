@@ -8,38 +8,63 @@
 <style type="text/css">
 
 /* Column Style */
-#dashboard-header {
+#dashboard-header, #dashboard-jjheader{
 	border-collapse:collapse;
 }
 
 /* Table Head */
-#dashboard-header thead th {
+#dashboard-jjheader thead th, #dashboard-header thead th {
 	background-color: rgb(81, 130, 187);
 	color: #fff;
 }
 
-#dashboard-header td, #table-mystock td {
+#dashboard-header th, #dashboard-jjheader th {
+	width: 90px;
+}
+
+#table-mystock td, #table-jjstock td {
+	width: 90px;
+}
+
+#table-mystock td, #table-jjstock td {
 	border-bottom: solid 1px rgb(0,0,0);
 }
 
 /* Padding and font style */
-#dashboard-header th, #table-mystock td{
+#dashboard-header th, #table-mystock td, #dashboard-jjheader th, #table-jjstock td{
 padding: 5px 10px;
+text-align:center;
 font-size: 12px;
 font-family: Verdana;
 font-weight: bold;
 }
 
-#table-mystock {
-	border-collapse:collapse;
+#dashboard_mystock{
+	height: 400px;
+	float: left;
+    border: 1px solid gray;
+	overflow: auto;  
 }
 
-#table-mystock td {
-	border-bottom: solid 1px rgb(0,0,0);
+#dashboard_jjstock{
+	height: 250px;
+	float: left;
+    border: 1px solid gray;
+	overflow: auto;  
 }
+
+
+#div_jj{
+	height: 350px;
+}
+
+#div_mystock{
+	height:350px;
+}
+
 
 p {
-	font-size: 14px;
+	font-size: 18px;
 	font-family: Verdana;
 	font-weight: bold;}
 
@@ -63,30 +88,35 @@ p {
 	overflow: auto;    
 }
 
-#dashboard_mystock{
-	height: 400px;
-	float: left;
-    border: 1px solid gray;
-	overflow: auto;  
-}
+
 
 </style>
 
 </head>
 <body>
 
-<div id="main">
-
-	<div id="dashboard_jj">
+<div id="div_jj">
+  <div>
+ 		<p>集合竞价关注</p>
+	<table id='dashboard-jjheader'>
+	     <thead>
+	         <th>股票代码</th> 
+	         <th>股票名称</th>
+	         <th>大单净额(万)</th>
+	         <th>当前成交额(万)</th>
+	         <th>上榜涨幅</th>
+	         <th>当前涨幅</th>
+	         <th>当前价格</th>
+	     </thead>
+    </table>
+   </div>
+   
+	<div id="dashboard_jjstock">
 	
-	</div>
-	
-	<div id="dashboard_selfselect">
-			
 	</div>
 </div>
-
-<div >
+	
+<div id="div_mystock">
 	<div id="dashboard_div">
 		<p>交易时间上榜标的</p>
 		  <table id='dashboard-header'> 
@@ -114,7 +144,7 @@ p {
 <script type="text/javascript">
  
 $(document).ready(function(){
-setInterval("startRequest()",2000);
+setInterval("startRequest()",5000);
 });
 	 
  function startRequest(){
@@ -126,7 +156,7 @@ setInterval("startRequest()",2000);
 	     timeout: 5000,
 	     success: function(data1,textStatus, jqXHR) {
 	    	 
-	    	 $("#dashboard_jj").html(data1);
+	    	 $("#dashboard_jjstock").html(data1);
 	    	 
 	     },
 		     error : function(jqXHR, textStatus, errorThrown){  

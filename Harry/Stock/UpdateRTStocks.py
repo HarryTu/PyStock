@@ -287,7 +287,7 @@ if "__name__ == __main__(input)":
 
 
 #     input = sys.argv[1]
-    input = 'sz'
+    input = 'sh'
          
     if input is None or input not in('sh', 'sz'):
          
@@ -314,7 +314,7 @@ if "__name__ == __main__(input)":
 #                 
 #             mytime = int(time.strftime("%H%M%S"))
 #                 
-#             if (92100 <= mytime < 92435):
+#             if (92040 <= mytime < 92435):
 #                     
 #                 if counter20 < 1: 
 #                         

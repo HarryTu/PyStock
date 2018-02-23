@@ -18,7 +18,6 @@ from pymysql import NULL
 
 
 app = Flask(__name__)
-logger = LoggerFactory.getLogger("Reporting")
 
 def GetReportData():
     
@@ -59,7 +58,6 @@ def dashboard():
     return render_template('dashboard.html', stocks = stockData)       
 
 
-
 @app.route('/jjdashboard')
 def jjdashboard():
     
@@ -71,6 +69,6 @@ def jjdashboard():
 if __name__=="__main__":
 
 #     app.run("10.35.83.34")
-    app.run("192.168.1.3")
+    app.run()
     
 
