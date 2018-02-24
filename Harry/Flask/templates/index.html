@@ -19,11 +19,11 @@
 }
 
 #dashboard-header th, #dashboard-jjheader th {
-	width: 90px;
+	width: 80px;
 }
 
 #table-mystock td, #table-jjstock td {
-	width: 90px;
+	width: 80px;
 }
 
 #table-mystock td, #table-jjstock td {
@@ -34,20 +34,20 @@
 #dashboard-header th, #table-mystock td, #dashboard-jjheader th, #table-jjstock td{
 padding: 5px 10px;
 text-align:center;
-font-size: 12px;
+font-size: 9px;
 font-family: Verdana;
 font-weight: bold;
 }
 
 #dashboard_mystock{
-	height: 400px;
+	height: 380px;
 	float: left;
     border: 1px solid gray;
 	overflow: auto;  
 }
 
 #dashboard_jjstock{
-	height: 250px;
+	height: 220px;
 	float: left;
     border: 1px solid gray;
 	overflow: auto;  
@@ -55,7 +55,7 @@ font-weight: bold;
 
 
 #div_jj{
-	height: 350px;
+	height: 280px;
 }
 
 #div_mystock{
@@ -64,7 +64,7 @@ font-weight: bold;
 
 
 p {
-	font-size: 18px;
+	font-size: 12px;
 	font-family: Verdana;
 	font-weight: bold;}
 
@@ -100,10 +100,14 @@ p {
  		<p>集合竞价关注</p>
 	<table id='dashboard-jjheader'>
 	     <thead>
-	         <th>股票代码</th> 
+	         <th style="width:60px;">股票代码</th> 
 	         <th>股票名称</th>
+	         <th>行业</th>
 	         <th>大单净额(万)</th>
-	         <th>当前成交额(万)</th>
+	         <th>换手率</th>
+	         <th>成交额(万)</th>
+	         <th>竞价价格比</th>
+	         <th>量比</th>
 	         <th>上榜涨幅</th>
 	         <th>当前涨幅</th>
 	         <th>当前价格</th>
@@ -123,6 +127,7 @@ p {
 		      <thead>
 		         <th>股票代码</th> 
 		         <th>股票名称</th>
+		         <th>行业</th>
 		         <th>上榜时间</th>
 		         <th>上榜净额(万)</th>
 		         <th>当前净额(万)</th>

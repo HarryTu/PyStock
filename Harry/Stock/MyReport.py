@@ -80,9 +80,11 @@ def Test():
 
 def GetMyStockReport(dboper):
     
-    sql = "select code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, \
-            initchangeratio, changeratio, amountp,inittime,price from mystocks where mtype=1 order by changeratio desc" 
+#     sql = "select code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, \
+#             initchangeratio, changeratio, amountp,inittime,price from mystocks where mtype=1 order by changeratio desc" 
     
+    sql = "select b.code, a.name, b.cashin, b.cashout, b.initnetvalue, b.netvalue, b.iorate, b.turnover, \
+        b.initchangeratio, b.changeratio, b.amountp, b.inittime, b.price, a.industry from stocks a, mystocks b where a.code=b.code and b.mtype=1 order by b.changeratio desc" 
     
     stocklist = []
     
@@ -104,6 +106,7 @@ def GetMyStockReport(dboper):
             stockData['amountp'] = stock[10]            
             stockData['inittime'] = stock[11].strftime('%H:%M:%S')
             stockData['price'] = stock[12]
+            stockData['industry'] = stock[13]
  
         
             stocklist.append(deepcopy(stockData)) 
@@ -117,7 +120,9 @@ def GetMyStockReport(dboper):
     
 def GetJJMyStockReport(dboper):
     
-    sql = "select code, name, netvalue, amountp, initchangeratio, changeratio, price from mystocks where mtype=0 order by changeratio desc" 
+    sql = "select b.code, a.name, a.industry, b.netvalue, b.amountp, b.initchangeratio, b.changeratio, b.price, b.pricerate, b.qrratio, b.turnover \
+            from stocks a, mystocks b \
+            where a.code=b.code and b.mtype=0 order by b.changeratio desc" 
 
     stocklist = []
     
@@ -130,12 +135,16 @@ def GetJJMyStockReport(dboper):
             stockData = {}
             stockData['code'] = stock[0]
             stockData['name'] = stock[1]  
-            stockData['netvalue'] = stock[2]
-            stockData['amountp'] = stock[3]
-            stockData['initchangeratio'] = stock[4]
-            stockData['changeratio'] = stock[5]
-            stockData['price'] = stock[6]
-                        
+            stockData['industry'] = stock[2]  
+            stockData['netvalue'] = stock[3]
+            stockData['amountp'] = stock[4]
+            stockData['initchangeratio'] = stock[5]
+            stockData['changeratio'] = stock[6]
+            stockData['price'] = stock[7]
+            stockData['pricerate'] = stock[8]
+            stockData['qrratio'] = stock[9]
+            stockData['turnover'] = stock[10]
+
             stocklist.append(deepcopy(stockData)) 
         
         return stocklist

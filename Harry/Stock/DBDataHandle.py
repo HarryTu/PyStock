@@ -96,13 +96,13 @@ def UpdateRTData( dboper, stockdata, mytime ):
 
 
 
-def UpdateMyStock( dboper, stockData, logger, mytime ):
+def UpdateMyStock( dboper, stockData, mytime ):
                     
     sql = "update mystocks set cashin=%0.2f, cashout=%0.2f, netvalue=%0.2f, iorate=%0.2f, turnover=%0.2f, qrratio=%0.2f, price=%0.2f, changeratio=%0.2f, amountp=%0.2f, amountn=%0.2f, mtime=%s where code='%s'" \
                 %(stockData['cashin'], stockData['cashout'], stockData['netvalue'], stockData['iorate'], stockData['turnover'], stockData['qrratio'], stockData['price'], stockData['changeratio'], stockData['amountp'],stockData['amountn'], mytime, stockData['code']) 
 
     
-    logger.debug( sql )
+    LoggerFactory.debug("UpdateMyStock", sql)
     
 #     dboper = DBOperation.DBOperation()
     
@@ -110,7 +110,7 @@ def UpdateMyStock( dboper, stockData, logger, mytime ):
     
 
 
-def InsertMyStock( dboper, stockData, logger, mytime ):
+def InsertMyStock( dboper, stockData, mytime ):
                     
 #     print stockData['code']
 #     print stockData['name']
@@ -129,13 +129,14 @@ def InsertMyStock( dboper, stockData, logger, mytime ):
 #     print stockData['codealias']
                     
 
-    sql = "insert into mystocks(code, name, cashin, cashout, initnetvalue, netvalue, iorate, turnover, qrratio, price, initchangeratio, changeratio, amountp, amountn, inittime, codealias, mtype)\
-                 values('%s', '%s', '%0.2f', '%0.2f', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s', %d)" \
-        %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], stockData['netvalue'], \
-          stockData['iorate'], stockData['turnover'], stockData['qrratio'], stockData['price'], stockData['initchangeratio'], stockData['changeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'], stockData['mtype'])  
+    sql = "insert into mystocks(code, cashin, cashout, initnetvalue, netvalue, iorate, turnover, qrratio, initprice, price, pricerate, initchangeratio, changeratio, amountp, amountn, inittime, codealias, mtype)\
+                 values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.4f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s', %d)" \
+        %(stockData['code'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], stockData['netvalue'], \
+          stockData['iorate'], stockData['turnover'], stockData['qrratio'], stockData['initprice'], stockData['price'], stockData['pricerate'], stockData['initchangeratio'], stockData['changeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'], stockData['mtype'])  
                 
     
-    logger.debug( sql )
+    LoggerFactory.debug("InsertMyStock", sql)
+#     logger.debug( sql )
     
 #     dboper = DBOperation.DBOperation()
     
@@ -159,6 +160,6 @@ if __name__=='__main__':
 
     circulated = 450000
     dboper = DBOperation.DBOperation()
-    logger = LoggerFactory.getLogger("InitRTStocks")
+
     
 #     InitRTStocks(circulated,dboper,logger)

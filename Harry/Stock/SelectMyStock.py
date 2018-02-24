@@ -13,188 +13,136 @@ import LoggerFactory
 import DBDataHandle
 
 
-
-# def SelectJJStock( dboper, logger):
-#     
-#     mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
-#     
-#     sql_rtstock = "select code from rtstocks where mtime >= %s" % mytimequery
-#     
-#     check_sql="select code from mystocks where mtype=0"
-# 
-#     selectData = dboper.queryData(sql_rtstock)
-#     checkData = dboper.queryData( check_sql )
-#    
-#     hisdaytime = "str_to_date('%s'," % (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d') + "'%Y-%m-%d')"
-#     
-#     stockData ={}
-#     codelist = []
-#     
-#     if checkData is not None:
-#         
-#         for data in checkData:
-#              
-#             codelist.append(data[0])
-#     
-#     if selectData is not None and len(selectData)>0:
-#         
-#         for code in selectData:
-#             
-#             if checkExist( code[0], codelist ):
-#                 
-#                 logger.info("%s This stock already exists in the table mystocks..." % data[0])
-#                 
-#             else:
-#             
-#                 sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias, b.qrratio \
-#                                 from stocks a, rtstocks b where a.code=b.code and b.code='%s'" % code[0]  
-#                 
-#                 sql_hisstock = "select cashin, cashout, netvalue, price, turnover, qrratio from hisstocks \
-#                                 where code='%s' and mtime=%s" %(code[0], hisdaytime)  
-#                 
-#                 mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
-#                 
-#                 stockData = {}
-#                 stockHisData = {}
-#             
-#                 logger.debug( sql_mystock )
-#                 logger.debug( sql_hisstock )
-#                 
-#                 rtData = dboper.queryOneData( sql_mystock )
-#                 hisData = dboper.queryOneData( sql_hisstock )
-#                 
-#                 if rtData is not None and hisData is not None:
-#                     
-#                     stockData['code']= rtData[0]
-#                     stockData['name'] = rtData[1]
-#                     stockData['cashin'] = rtData[2]
-#                     stockData['cashout'] = rtData[3]
-#                     stockData['initnetvalue'] = rtData[4]
-#                     stockData['netvalue'] = rtData[4]
-#                     stockData['iorate'] = rtData[5]
-#                     stockData['price'] = rtData[6]
-#                     stockData['turnover'] = rtData[7]
-#                     stockData['initchangeratio'] = rtData[8]
-#                     stockData['changeratio'] = rtData[8]
-#                     stockData['amountp'] = rtData[9]
-#                     stockData['amountn'] = rtData[10]
-#                     stockData['codealias'] = rtData[11]
-#                     stockData['qrratio'] = rtData[12]
-#                     stockData['mtype'] = 0
-#               
-#                     stockHisData['price'] = hisData[3]
-#                     stockHisData['price'] = hisData[2]
-#                   
-#                   
-#                     if stockData['turnover']>2 and stockData['cashin']>=50 and stockData['netvalue']>=50:
-#                         
-#                         logger.info("Inserting a new Stock %s during bidding..." % stockData['code'])
-#                         DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
-# 
-#     else:
-#         
-#         logger.error("There is no data selected from rtstocks") 
+def GetJJBasicData( dboper ):
             
-            
-def SelectJJStock_New( dboper, logger):
-      
 #     mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
     
-    mytimequery = "str_to_date('2018-02-14', '%Y-%m-%d')"
+    mytimequery = "str_to_date('2018-02-23', '%Y-%m-%d')"
       
-    sql_jjtemp = "select code from jjtemp where price > initprice and mtime >= %s" % mytimequery
+    sql_jjData = "select a.code, a.codealias, a.name, a.industry, b.initprice, b.price, c.cashin, c.cashout, c.netvalue, c.turnover, c.changeratio, c.amountp, c.amountn \
+                 from stocks a, jjtemp b, jjstocks c where a.code = b.code and b.code = c.code and b.mtime >=%s \
+                 and c.mtime >=%s and b.price > b.initprice and b.initprice >0 " % (mytimequery, mytimequery)
       
-    check_sql="select code from mystocks where mtype=0"
-  
-    jjTempData = dboper.queryData(sql_jjtemp)
-    myStockData = dboper.queryData( check_sql )
-     
-#     hisdaytime = "str_to_date('%s'," % (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    sql_mystock="select code from mystocks where mtype=0"
+    
+    
+    LoggerFactory.debug("sql_jjData", sql_jjData)
+    LoggerFactory.debug("sql_mystock", sql_mystock)
+    
+    jjDataCol = dboper.queryData(sql_jjData)
+    myStockDataCol = dboper.queryData( sql_mystock )
       
-    stockData ={}
+    stockDataList =[]
     codelist = []
       
-    if myStockData is not None:
+    if myStockDataCol is not None:
           
-        for data in myStockData:
+        for data in myStockDataCol:
                
             codelist.append(data[0])
       
-    if jjTempData is not None and len(jjTempData)>0:
+    if jjDataCol is not None and len(jjDataCol)>0:
           
-        for code in jjTempData:
-
-            if checkExist( code[0], codelist ):
-                  
-                logger.info("%s This stock already exists in the table mystocks..." % data[0])
+        for jjdata in jjDataCol: 
+        
+            if checkExist( jjdata[0], codelist ):
+                
+                LoggerFactory.debug("SelectJJStock_rule1", "%s This stock already exists in the table mystocks..." % data[0])
                   
             else:
-              
-#                 sql_mystock = "select a.code, a.name, b.cashin, b.cashout, b.netvalue, b.iorate, b.price, b.turnover, b.changeratio, b.amountp, b.amountn, a.codealias, b.qrratio \
-#                                 from stocks a, rtstocks b where a.code=b.code and b.code='%s'" % code[0]  
-#                  
-#                 sql_hisstock = "select cashin, cashout, netvalue, price, turnover, qrratio from hisstocks \
-#                                 where code='%s' and mtime=%s" %(code[0], hisdaytime)  
-                mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
-                  
-                sql_jjtempdata = "select code, initprice, price, initchangeratio, changeratio from jjtemp where code='%s'"%code[0]
-                 
-                sql_jjStockData = "select a.name, a.industry, b.netvalue, b.qrratio, b.turnover, b.amountp, b.changeratio from stocks a, jjstocks b where a.code = b.code and b.code='%s' and \
-                                    b.mtime >= %s "% (code[0], mytimequery)
+                stockData ={}
                 
-                jjtempData = {}
-                jjstockData = {}
+                stockData['code'] = jjdata[0]
+                stockData['codealias'] = jjdata[1]
+                stockData['name'] = jjdata[2]
+                stockData['industry'] = jjdata[3]
+                stockData['initprice'] = jjdata[4]
+                stockData['price'] = jjdata[5]
+                stockData['cashin'] = jjdata[6]
+                stockData['cashout'] = jjdata[7]
+                stockData['netvalue'] = jjdata[8]
+                stockData['turnover'] = jjdata[9]
+                stockData['changeratio'] = jjdata[10]
+                stockData['amountp'] = jjdata[11]
+                stockData['amountn'] = jjdata[12]
                 
-                logger.debug( sql_jjtempdata )
-                logger.debug( sql_jjStockData )
-                  
-                jjTempQuery = dboper.queryOneData( sql_jjtempdata )
-                jjStockQuery = dboper.queryOneData( sql_jjStockData )
-                  
-                if jjTempData is not None and jjStockQuery is not None:
-                      
-                    jjtempData['code']= jjTempQuery[0]
-                    jjtempData['initprice'] = jjTempQuery[1]
-                    jjtempData['price'] = jjTempQuery[2]
-                    jjtempData['initchangeratio'] = jjTempQuery[3]
-                    jjtempData['changeratio'] = jjTempQuery[4]
-                    
-                    jjstockData['name'] = jjStockQuery[0]
-                    jjstockData['industry'] = jjStockQuery[1]
-                    jjstockData['netvalue'] = jjStockQuery[2]
-                    jjstockData['qrratio'] = jjStockQuery[3]
-                    jjstockData['turnover'] = jjStockQuery[4]
-                    jjstockData['amountp'] = jjStockQuery[5]
-                    jjstockData['changeratio'] = jjStockQuery[6]
-                    
-                    if code[0] == '603165':
-                        print "603165"
-                        print jjstockData['changeratio'],
-                        print jjstockData['amountp'],
-                        print jjstockData['turnover']
-                    
-                    if 0<jjstockData['changeratio']<=4 and \
-                            jjstockData['amountp']>30 and \
-                                jjstockData['turnover'] >=0.1:
-                                   
-                          
-                          print jjtempData['code'],
-                          print jjstockData['name'],
-                          print jjstockData['industry']
-                          
-#                         logger.info("Inserting a new Stock %s during bidding..." % stockData['code'])
-#                         DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
-  
+                stockDataList.append(stockData) 
+        
+        return stockDataList
+        
+        
     else:
           
-        logger.error("There is no data selected from rtstocks") 
-
-
+        LoggerFactory.error("SelectJJStock_rule1", "There is no data selected from rtstocks")
+        
+        return None
             
             
-def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=1000000, changerate=1, iorate=1.4, amountp=3000, netvaluemin=1000 ):
+def SelectJJStock_rule1( dboper ):
+          
+    dataList = GetJJBasicData(dboper)
+    
+    stockData = {}
+    
+    if dataList is not None and len(dataList) > 0: 
+        
+        for data in dataList: 
+          
+            stockData['code'] = data['code']
+            stockData['codealias'] = data['codealias']
+            stockData['name'] = data['name']
+            stockData['industry'] = data['industry']
+            stockData['initprice'] = data['initprice']
+            stockData['price'] = data['price']
+            stockData['cashin'] = data['cashin']
+            stockData['cashout'] = data['cashout']
+            stockData['initnetvalue'] = data['netvalue']
+            stockData['netvalue'] = data['netvalue']
+            stockData['turnover'] = data['turnover']
+            stockData['initchangeratio'] = data['changeratio']
+            stockData['changeratio'] = data['changeratio']
+            stockData['amountp'] = data['amountp']
+            stockData['amountn'] = data['amountn']
+            stockData['qrratio'] = 0
+            stockData['mtype']= 0
+            
+            if stockData['cashout'] > 0 and stockData['cashin'] > 0:
+                
+                stockData['iorate'] = round( stockData['cashin'] / stockData['cashout'], 2 )
+                
+            else: 
+                
+                stockData['iorate'] = 0
+        
+        
+                    
+            if stockData['price'] > 0 and stockData['initprice'] > 0:
+                
+                stockData['pricerate'] = round( stockData['price'] / stockData['initprice'], 4 )
+                
+            else: 
+                
+                stockData['pricerate'] = 0
+            
+            
+            if round(stockData['price'] / stockData['initprice'], 4) >= 1.005 \
+                and stockData['amountp'] >= 200 and ( stockData['changeratio'] >= -3 and stockData['changeratio'] <= 5) \
+                    and stockData['netvalue'] > 0: 
+                
+                mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
+                
+                DBDataHandle.InsertMyStock(dboper, stockData, mytime)
+                
+                LoggerFactory.info("SelectJJStock_rule1", "The stock %s is selected out" % stockData['code'])
+            
+               
+            
+            
+def SelectMyStock( dboper, circulatedMin=70000,circulatedMax=1000000, changerate=1, iorate=1.4, amountp=3000, netvaluemin=1000 ):
     
     mytimeqeury = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
+    mytimeqeury = "str_to_date('2018-02-22', '%Y-%m-%d')"
     
     select_sql = "select a.code,a.name,b.cashin,b.cashout,b.netvalue,b.iorate,b.turnover,b.price,b.changeratio,b.amountp,b.amountn, a.codealias, b.qrratio from stocks a, rtstocks b \
             where a.code=b.code and b.iorate>=%0.2f and b.amountp>=%0.2f and b.changeratio > %0.2f and ( circulated >= %0.2f and circulated <= %0.2f) and b.netvalue >= %0.2f and b.mtime >=%s and b.turnover <= %0.2f" \
@@ -224,7 +172,8 @@ def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=1000000, ch
             
             if checkExist( data[0], codelist ):
                 
-                logger.info("The stock %s already exists in the table mystocks..." % data[0])
+                LoggerFactory.info("SelectMyStock", "The stock %s already exists in the table mystocks..." % data[0])
+#                 logger.info("The stock %s already exists in the table mystocks..." % data[0])
 #                 stockData['code']=data[0]
 #                 stockData['name']=data[1]
 #                 stockData['cashin']=data[2]
@@ -260,19 +209,21 @@ def SelectMyStock( dboper, logger, circulatedMin=70000,circulatedMax=1000000, ch
                 stockData['codealias']=data[11]
                 stockData['qrratio']=data[12]
                 stockData['mtype']=1
-            
-                logger.info("Insert a new selected Stock: %s into the pool!" %stockData['name'])
+                
+                LoggerFactory.info("SelectMyStock", "Insert a new selected Stock: %s into the pool!" %stockData['name'])
+#                 logger.info("Insert a new selected Stock: %s into the pool!" %stockData['name'])
                 
 #                 insert_sql = "insert into stocks(code, name, cashin, cashout, initnetvalue, iorate, turnover, price, initchangeratio, amountp, amountn)\
 #                              values('%s', '%s', '%0.2f', '%0.2f', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
 #                     %(stockData['code'], stockData['name'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], \
 #                       stockData['iorate'], stockData['turnover'], stockData['price'], stockData['initchangeratio'], stockData['amountp'], stockData['amountn'], mytime )  
                 
-                DBDataHandle.InsertMyStock(dboper, stockData, logger, mytime)
+                DBDataHandle.InsertMyStock(dboper, stockData, mytime)
     
     else: 
         
-        logger.info("There is no qualified Stock detected at this moment!")           
+        LoggerFactory.info("SelectMyStock", "There is no qualified Stock detected at this moment!")
+#         logger.info("There is no qualified Stock detected at this moment!")           
                 
                 
                 
@@ -289,9 +240,7 @@ if __name__ == '__main__':
     
     dboper = DBOperation.DBOperation()
 
-
-
-#     SelectMyStock(dboper, logger)
+    SelectJJStock_rule1(dboper)
 
 
 #     while True:
@@ -300,13 +249,13 @@ if __name__ == '__main__':
 #             
 #         if ( 92520 <= mytime < 92950 ):
 #               
-#             SelectJJStock_New(dboper, logger)
+#             SelectJJStock_New( dboper )
 #                  
 #             time.sleep(2)
 #           
 #         elif ( 93000 <= mytime <= 113030 ) or ( 130000 <= mytime <= 150030 ):
 #                  
-#             SelectMyStock(dboper, logger)
+#             SelectMyStock( dboper )
 #                  
 #             time.sleep(2)
 #           

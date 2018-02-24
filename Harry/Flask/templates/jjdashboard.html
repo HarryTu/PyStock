@@ -3,10 +3,14 @@
 	<table id="table-jjstock">	
       {% for data in stocks %}
           <tr>
-              <td>{{data['code']}}</td>
+              <td style="width:60px;">{{data['code']}}</td>
               <td>{{data['name']}}</td>
+              <td>{{data['industry']}}</td>
               <td>{{data['netvalue']}}</td>
+              <td>{{data['turnover']}}</td>
               <td>{{data['amountp']}}</td>
+              <td>{{data['pricerate']}}</td>
+              <td>{{data['qrratio']}}</td>
               <td class='checkjjvalue'>{{data['initchangeratio']}}</td>
               <td class='checkjjvalue'>{{data['changeratio']}}</td>
               <td>{{data['price']}}</td>

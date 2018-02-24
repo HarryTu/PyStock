@@ -49,6 +49,7 @@ mtime datetime
 alter table jjstocks add primary key(code,mtime);
 
 
+
 create table jjtemp(
 code varchar(7),
 codealias varchar(10),
@@ -59,19 +60,24 @@ changeratio float,
 mtime datetime
 )
 
-alter table jjtemp add primary key(code)
+alter table jjtemp add primary key(code, mtime)
+
+create index ind_time on jjtemp
+
+
 
 create table mystocks(
 code varchar(7),
 codealias varchar(10),
-name varchar(10),
 cashin float,
 cashout float,
 initnetvalue float,
 netvalue float,
 iorate float,
+pricerate float,
 turnover float,
 qrratio float,
+initprice float,
 price float,
 initchangeratio float,
 changeratio float,
