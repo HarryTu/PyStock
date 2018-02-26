@@ -120,9 +120,15 @@ def GetMyStockReport(dboper):
     
 def GetJJMyStockReport(dboper):
     
-    sql = "select b.code, a.name, a.industry, b.netvalue, b.amountp, b.initchangeratio, b.changeratio, b.price, b.pricerate, b.qrratio, b.turnover \
-            from stocks a, mystocks b \
-            where a.code=b.code and b.mtype=0 order by b.changeratio desc" 
+#     sql = "select b.code, a.name, a.industry, b.netvalue, b.amountp, b.initchangeratio, b.changeratio, b.price, b.pricerate, b.qrratio, b.turnover \
+#             from stocks a, mystocks b \
+#             where a.code=b.code and b.mtype=0 order by b.changeratio desc" 
+#     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    mytime = "str_to_date('2018-02-23','%Y-%m-%d')"
+    
+    sql = "select b.code, a.name, a.industry, b.netvalue, b.amountp, b.initchangeratio, b.changeratio, b.price, b.pricerate, b.qrratio, b.turnover, c.netvalue, c.turnover, c.amountp \
+        from stocks a, mystocks b, jjstocks c \
+        where a.code=b.code and c.code = b.code and b.mtype=0 and c.mtime >= %s order by b.changeratio desc"  % mytime
 
     stocklist = []
     
@@ -144,6 +150,9 @@ def GetJJMyStockReport(dboper):
             stockData['pricerate'] = stock[8]
             stockData['qrratio'] = stock[9]
             stockData['turnover'] = stock[10]
+            stockData['jjnetvalue'] = stock[11]
+            stockData['jjturnover'] = stock[12]
+            stockData['jjamountp'] = stock[13]
 
             stocklist.append(deepcopy(stockData)) 
         

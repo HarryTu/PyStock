@@ -286,8 +286,8 @@ if "__name__ == __main__(input)":
 #     input = raw_input()
 
 
-#     input = sys.argv[1]
-    input = 'sh'
+    input = sys.argv[1]
+#     input = 'sh'
          
     if input is None or input not in('sh', 'sz'):
          
