@@ -122,9 +122,10 @@ def GetJJMyStockReport(dboper):
     
 #     sql = "select b.code, a.name, a.industry, b.netvalue, b.amountp, b.initchangeratio, b.changeratio, b.price, b.pricerate, b.qrratio, b.turnover \
 #             from stocks a, mystocks b \
-#             where a.code=b.code and b.mtype=0 order by b.changeratio desc" 
-#     mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
-    mytime = "str_to_date('2018-02-23','%Y-%m-%d')"
+#             where a.code=b.code and b.mtype=0 order by b.changeratio desc"
+ 
+    mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+#     mytime = "str_to_date('2018-02-23','%Y-%m-%d')"
     
     sql = "select b.code, a.name, a.industry, b.netvalue, b.amountp, b.initchangeratio, b.changeratio, b.price, b.pricerate, b.qrratio, b.turnover, c.netvalue, c.turnover, c.amountp \
         from stocks a, mystocks b, jjstocks c \

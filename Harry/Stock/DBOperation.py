@@ -59,13 +59,11 @@ class DBOperation:
                 conn.rollback()
                 
                 LoggerFactory.error("sqlExecute", "SQL statement execution failed!" + "\n" + "Error message: " + str(e) + "\n" + sql)
-#                 self.logger.error("SQL statement execution failed!" + "\n" + "Error message: " + str(e) + "\n" + sql )
                 
                 return False
         else: 
             
             LoggerFactory.error("sqlExecute","Cannot get DB connection!")
-#             self.logger.error("Cannot get DB connection!")
             
             return False
         
@@ -92,7 +90,6 @@ class DBOperation:
         else: 
             
             LoggerFactory.error("queryData", "Cannot get DB connection!")
-#             self.logger.error("Cannot get DB connection!")
             
             return None
         
@@ -116,7 +113,6 @@ class DBOperation:
         else: 
             
             LoggerFactory.error("queryOneData", "Cannot get DB connection!")
-#             self.logger.error("Cannot get DB connection!")
             
             return None       
             
@@ -130,8 +126,7 @@ if __name__ == '__main__':
     
     if dboper.poolvalidate():
         
-#         results =  dboper.sqlExecute(sql)
-        
+#         results =  dboper.sqlExecute(sql)        
         results = dboper.queryData(sql1)
         
         for i in results:

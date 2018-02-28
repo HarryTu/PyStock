@@ -15,9 +15,9 @@ import DBDataHandle
 
 def GetJJBasicData( dboper ):
             
-#     mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
     
-    mytimequery = "str_to_date('2018-02-23', '%Y-%m-%d')"
+#     mytimequery = "str_to_date('2018-02-23', '%Y-%m-%d')"
       
     sql_jjData = "select a.code, a.codealias, a.name, a.industry, b.initprice, b.price, c.cashin, c.cashout, c.netvalue, c.turnover, c.changeratio, c.amountp, c.amountn \
                  from stocks a, jjtemp b, jjstocks c where a.code = b.code and b.code = c.code and b.mtime >=%s \

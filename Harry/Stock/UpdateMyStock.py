@@ -84,27 +84,26 @@ if __name__=="__main__":
     
     dboper = DBOperation.DBOperation()        
 
-    UpdateMyStock(dboper)
-#     while True:
-#          
-#         mytime = int(time.strftime("%H%M%S"))      
-#        
-#         if( 92000 <= mytime <= 113030 ) or ( 130000 <= mytime <= 150030 ):
-#             
-#             threading.Thread(target = UpdateMyStock, args=(dboper, logger)).start()
+#     UpdateMyStock(dboper)
+    while True:
+          
+        mytime = int(time.strftime("%H%M%S"))      
+        
+        if( 92000 <= mytime <= 113030 ) or ( 130000 <= mytime <= 150030 ):
+            
+    
+#             threading.Thread(target=UpdateMyStock, args=(dboper)).start()
 #             time.sleep(0.5)
-# #             UpdateMyStock(dboper, logger)
-#        
-#         elif( mytime < 90000 or mytime > 150100):
-#                
-# #                 logger.info("不在交易时间...退出程序!")
-#             logger.info("Out of trade time now...exit!")
-#               
-#             break
-#         
-#         else: 
-#               
-# #                 logger.info("休息时间。。。")
-#             logger.info("It's not in trade time yet, waiting for market to open!!")
-#             time.sleep(30)
+            UpdateMyStock(dboper)
+        
+        elif( mytime < 90000 or mytime > 150100):
+                
+            LoggerFactory.info("UpdateMyStock", "Out of trade time now...exit!")
+               
+            break
+         
+        else: 
+               
+            LoggerFactory.info("UpdateMyStock", "It's not in trade time yet, waiting for market to open!!")
+            time.sleep(30)
         

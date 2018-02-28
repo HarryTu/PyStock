@@ -270,13 +270,11 @@ def DonwloadAllStockBasic( FilePath ):
         df.to_csv( FilePath, encoding='utf-8' )
         
         LoggerFactory.info("DonwloadAllStockBasic", "New stock list has been created successfully!")
-#         logger.info( "New stock list has been created successfully!" )
     
     except Exception, e:
         
         LoggerFactory.error("DonwloadAllStockBasic", "Creating new stock list failed by tushare, please check!!! ")
-#         logger.error("Creating new stock list failed by tushare, please check!!! ")
-    
+        
         exit
         
         

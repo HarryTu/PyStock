@@ -68,7 +68,7 @@ def jjdashboard():
 
 if __name__=="__main__":
 
-#     app.run("10.35.83.34")
-    app.run()
+    app.run("10.35.83.34")
+#     app.run()
     
 

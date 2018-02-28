@@ -22,7 +22,7 @@ def InsertHisData( dboper, stockdata ):
             %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['iorate'], stockdata['turnover'], stockdata['qrratio'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
     
     LoggerFactory.debug("InsertHisData", sql)
-#     logger.debug( sql )
+
     
     dboper.sqlExecute(sql)
 
@@ -35,48 +35,39 @@ def InsertRTData( dboper, stockdata, mytime ):
 
     
     LoggerFactory.debug("InsertRTData", sql)
-#     logger.debug( sql )
-    
-#     dboper = DBOperation.DBOperation()
     
     dboper.sqlExecute(sql)
 
 
-def InsertJJStock( dboper, stockdata, logger, mytime ):
+def InsertJJStock( dboper, stockdata, mytime ):
                     
     sql = "insert into jjstocks(code, cashin, cashout, netvalue, qrratio, turnover, price, changeratio, amountp, amountn, mtime)  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %s )" \
             %(stockdata['code'], stockdata['cashin'], stockdata['cashout'], stockdata['netvalue'], stockdata['qrratio'], stockdata['turnover'], stockdata['price'], stockdata['changeratio'], stockdata['amountp'],stockdata['amountn'], mytime) 
 
     
-    logger.debug( sql )
-    
-#     dboper = DBOperation.DBOperation()
+    LoggerFactory.debug("InsertJJStock", sql)
+#     logger.debug( sql )
     
     dboper.sqlExecute(sql)
 
 
-def InsertJJTemp( dboper, stockdata, logger, mytime ):
+def InsertJJTemp( dboper, stockdata, mytime ):
                     
     sql = "insert into jjtemp(code, codealias, initprice, price, initchangeratio, changeratio, mtime)  values('%s', '%s', %0.2f, %0.2f, %0.2f, %0.2f, %s)" \
             %(stockdata['code'], stockdata['codealias'], stockdata['price'], stockdata['price'], stockdata['changeratio'], stockdata['changeratio'], mytime) 
 
     
-    logger.debug( sql )
-    
-#     dboper = DBOperation.DBOperation()
+    LoggerFactory.debug("InsertJJTemp", sql)
     
     dboper.sqlExecute(sql)
 
 
-def UpdateJJTemp( dboper, stockdata, logger, mytime ):
+def UpdateJJTemp( dboper, stockdata, mytime ):
                     
-    sql = "update jjtemp set price=%0.2f, changeratio=%0.2f, mtime=%s where code='%s'" \
-            %(stockdata['price'], stockdata['changeratio'], mytime, stockdata['code']) 
+    sql = "update jjtemp set price=%0.2f, changeratio=%0.2f where code='%s'" \
+            %(stockdata['price'], stockdata['changeratio'], stockdata['code']) 
 
-    
-    logger.debug( sql )
-    
-#     dboper = DBOperation.DBOperation()
+    LoggerFactory.debug("UpdateJJTemp", sql)
     
     dboper.sqlExecute(sql)
 
@@ -88,9 +79,6 @@ def UpdateRTData( dboper, stockdata, mytime ):
 
     
     LoggerFactory.debug("UpdateRTData", sql)
-#     logger.debug( sql )
-    
-#     dboper = DBOperation.DBOperation()
     
     dboper.sqlExecute(sql)
 
@@ -104,31 +92,12 @@ def UpdateMyStock( dboper, stockData, mytime ):
     
     LoggerFactory.debug("UpdateMyStock", sql)
     
-#     dboper = DBOperation.DBOperation()
-    
     dboper.sqlExecute(sql)
     
 
 
 def InsertMyStock( dboper, stockData, mytime ):
-                    
-#     print stockData['code']
-#     print stockData['name']
-#     print stockData['cashin']
-#     print stockData['cashout']
-#     print stockData['initnetvalue']
-#     print stockData['netvalue']
-#     print stockData['iorate']
-#     print stockData['turnover']
-#     print stockData['price']
-#     print stockData['initchangeratio']
-#     print stockData['changeratio']
-#     print stockData['amountp']
-#     print stockData['amountn']
-#     print mytime
-#     print stockData['codealias']
-                    
-
+                                       
     sql = "insert into mystocks(code, cashin, cashout, initnetvalue, netvalue, iorate, turnover, qrratio, initprice, price, pricerate, initchangeratio, changeratio, amountp, amountn, inittime, codealias, mtype)\
                  values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.4f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s', %d)" \
         %(stockData['code'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], stockData['netvalue'], \
@@ -136,9 +105,6 @@ def InsertMyStock( dboper, stockData, mytime ):
                 
     
     LoggerFactory.debug("InsertMyStock", sql)
-#     logger.debug( sql )
-    
-#     dboper = DBOperation.DBOperation()
     
     dboper.sqlExecute(sql)
 
@@ -146,8 +112,6 @@ def InsertMyStock( dboper, stockData, mytime ):
 def GetStockCode(dboper):
     
     sql = "select codealias from stocks where status=1"
-    
-#     dboper = DBOperation.DBOperation()
     
     results = dboper.queryData(sql)
     
