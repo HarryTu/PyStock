@@ -49,15 +49,16 @@ def InsertHisData(code,dboper):
         LoggerFactory.error("InsertHisData", "股票: %s 的相关信息获取失败..." % code)
 
 
+
 if "__name == __main__":
     
-    week_day = datetime.date.today().weekday()
-    
-    if ( week_day == 5 or week_day == 6 ): 
-    
-        LoggerFactory.info("HisStock", "Today is weekend, no historic data need to be collected.....")
-    
-    else: 
+#     week_day = datetime.date.today().weekday()
+#     
+#     if ( week_day == 5 or week_day == 6 ): 
+#     
+#         LoggerFactory.info("HisStock", "Today is weekend, no historic data need to be collected.....")
+#     
+#     else: 
         
         dboper = DBOperation.DBOperation()
         DailyHisData(dboper)

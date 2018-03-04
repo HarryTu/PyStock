@@ -109,6 +109,7 @@ def InsertMyStock( dboper, stockData, mytime ):
     dboper.sqlExecute(sql)
 
 
+
 def GetStockCode(dboper):
     
     sql = "select codealias from stocks where status=1"
@@ -118,6 +119,14 @@ def GetStockCode(dboper):
     return results
     
     
+def GetHisStockData(dboper, code, beginday, endday ):
+    
+    sql = "select changeratio from hisstocks where code='%s' and mtime >=%s and mtime <=%s" % (code, beginday, endday)
+    
+    LoggerFactory.debug("GetHisStockData", sql)
+    results = dboper.queryData( sql )
+    
+    return results    
     
     
 if __name__=='__main__':

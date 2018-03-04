@@ -301,14 +301,14 @@ if "__name__ == __main__(input)":
                     HandleJJStock(dboper, input, circulated)
                     counter25 = counter25 + 1
                     
-            elif (93000 <= mytime <= 114000) or (130000 <= mytime <= 180600):
-                      
-                LoggerFactory.info("UpdateRTStocks", "Starting to update RTStocks table...") 
-                HandleRTStock(dboper, input, circulated)
-                         
-                time.sleep(1)
+#             elif (93000 <= mytime <= 114000) or (130000 <= mytime <= 180600):
+#                       
+#                 LoggerFactory.info("UpdateRTStocks", "Starting to update RTStocks table...") 
+#                 HandleRTStock(dboper, input, circulated)
+#                          
+#                 time.sleep(1)
                   
-            elif(mytime < 90000 or mytime > 150200):
+            elif(mytime < 90000 or mytime > 93030):
                 
                 LoggerFactory.info("UpdateRTStocks", "Out of trade time...exit!")
                          

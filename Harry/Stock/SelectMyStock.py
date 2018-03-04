@@ -11,6 +11,7 @@ import datetime
 import DBOperation
 import LoggerFactory
 import DBDataHandle
+import code
 
 
 def GetJJBasicData( dboper ):
@@ -226,6 +227,53 @@ def SelectMyStock( dboper, circulatedMin=70000,circulatedMax=1000000, changerate
 #         logger.info("There is no qualified Stock detected at this moment!")           
                 
                 
+
+def GetFiveDaysHisData(dboper):
+    
+    circulated = 1800000
+    
+    nowtime=datetime.datetime.now()    
+    detaday = datetime.timedelta(days=-6)
+    days_ago= nowtime + detaday
+    
+    beginday = "str_to_date('%s'," % days_ago.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    endday = "str_to_date('%s'," % nowtime.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
+    sql = "select code, name, industry, circulated from stocks where status=1 and circulated<= %0.2f" % circulated
+    
+    results = dboper.queryData(sql)
+    
+    if results is not None and len(results) > 0:
+        
+        for stock in results:
+            
+            changeratio = 0
+            code = stock[0] 
+            name = stock[1]
+            industry = stock[2]
+            circulated = stock[3]
+
+            stockeach = DBDataHandle.GetHisStockData(dboper, code, beginday, endday)
+            
+            if stockeach is not None and len(stockeach) == 5:
+                
+                for ratio in stockeach: 
+                    
+                    changeratio = changeratio + ratio[0]
+                    
+                if changeratio >= 8 and changeratio <= 9:
+                    
+                    print code + " ",
+                    print name + " ",
+                    print str(changeratio) + " ",
+                    print  industry + " ",
+                    print round(circulated / 10000 , 2 )
+
+                
+                
+            
+    
+
                 
 def checkExist(codename, codelist):            
     
@@ -240,9 +288,9 @@ if __name__ == '__main__':
     
     dboper = DBOperation.DBOperation()
 
-    SelectJJStock_rule1(dboper)
+#     SelectJJStock_rule1(dboper)
 
-
+    GetFiveDaysHisData(dboper)
 #     while True:
 #              
 #         mytime = int(time.strftime("%H%M%S"))

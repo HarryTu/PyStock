@@ -16,7 +16,11 @@ if weekday == 0:
 else:
     print "other days"
 
+nowtime=datetime.datetime.now()    
+detaday = datetime.timedelta(days=-6)
+da_days= nowtime + detaday
 
-#view-source:http://basic.10jqka.com.cn/300140/concept.html
+print da_days.strftime('%Y-%m-%d')
+
     
     
