@@ -114,8 +114,6 @@ def SelectJJStock_rule1( dboper ):
             else: 
                 
                 stockData['iorate'] = 0
-        
-        
                     
             if stockData['price'] > 0 and stockData['initprice'] > 0:
                 
@@ -137,6 +135,79 @@ def SelectJJStock_rule1( dboper ):
                 LoggerFactory.info("SelectJJStock_rule1", "The stock %s is selected out" % stockData['code'])
             
                
+
+def SelectJJStock_rule2( dboper ):
+    
+    jjtodayData={}
+    
+    nowtime=datetime.datetime.now()
+    jjhisday_begin = nowtime + datetime.timedelta(days=-6)
+    jjhisday_end = nowtime + datetime.timedelta(days=-1)
+    
+    begindayquery= "str_to_date('%s'," % jjhisday_begin.strftime('%Y-%m-%d') + "'%Y-%m-%d')" 
+    enddayquery= "str_to_date('%s'," % jjhisday_end.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
+    mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+    
+    jjtoday_sql="select a.code, a.codealias, a.name, a.industry, b.changeratio, b.amountp \
+                 from stocks a, jjstocks b where a.code = b.code and b.mtime >=%s" % (mytimequery)
+    
+    LoggerFactory.debug("SelectJJStock_rule2", jjtoday_sql)
+    
+    jjtodayResult = dboper.queryData(jjtoday_sql)
+    
+    if jjtodayResult is not None and len(jjtodayResult) > 0:
+        
+        for data in jjtodayResult:
+            
+            jjtodayData['code'] = data[0]
+            jjtodayData['codealias'] = data[1]
+            jjtodayData['name'] = data[2]
+            jjtodayData['industry'] = data[3]
+            jjtodayData['changeratio'] = data[4]
+            jjtodayData['amountp'] = data[5]
+            jjtodayData['amountprate'] = 0
+            
+            jjhis_sql= "select amountp from jjstocks where code = '%s' and mtime >= %s and mtime <= %s" % (jjtodayData['code'], begindayquery, enddayquery)
+            LoggerFactory.debug("SelectJJStock_rule2", jjhis_sql)
+            
+            stockhis_sql = "select changeratio from hisstocks where code = '%s' and mtime >= %s and mtime <= %s" % (jjtodayData['code'], begindayquery, enddayquery)
+            LoggerFactory.debug("SelectJJStock_rule2", stockhis_sql)
+            
+            jjhisresults = dboper.queryData(jjhis_sql)
+            stockhisresults = dboper.queryData(stockhis_sql)
+            
+            tag = True
+            
+            if jjhisresults is not None and len(jjhisresults) >= 3 and jjtodayData['amountp'] >= 110: 
+            
+                counter = 0
+                
+                for data2 in jjhisresults:
+                    
+                    counter = counter + data2[0]
+                
+                if counter >0:     
+                    
+                    amountprate = round(jjtodayData['amountp'] / (counter/len(jjhisresults)),2)
+                         
+                    jjtodayData['amountprate'] = amountprate
+                    
+                    
+            if stockhisresults is not None and len(stockhisresults) > 0:
+                
+                for data3 in stockhisresults: 
+                    
+                    if data3[0] > 9.8: 
+                        tag = False
+                    
+                     
+            if tag and jjtodayData['amountprate'] > 2 :
+                        
+                print jjtodayData['code'],
+                print jjtodayData['name'],
+                print jjtodayData['industry'],
+                print jjtodayData['amountprate']
             
             
 def SelectMyStock( dboper, circulatedMin=70000,circulatedMax=1000000, changerate=1, iorate=1.4, amountp=3000, netvaluemin=1000 ):
@@ -290,7 +361,9 @@ if __name__ == '__main__':
 
 #     SelectJJStock_rule1(dboper)
 
-    GetFiveDaysHisData(dboper)
+#     GetFiveDaysHisData(dboper)
+
+    SelectJJStock_rule2(dboper)
 #     while True:
 #              
 #         mytime = int(time.strftime("%H%M%S"))
