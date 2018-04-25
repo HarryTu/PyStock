@@ -42,9 +42,9 @@ def InitStockDB(file):
             else:
                 status = 1
             
-            sql = "insert into stocks(code, codealias, name, industry, circulated, totalstock, status, peg, lyr, mtime)  values('%s', '%s', '%s', '%s', %0.2f, %0.2f, %d, %0.2f, %0.2f, %s )" \
+            sql = "insert into stocks(code, codealias, name, industry, circulated, totalstock, status, peg, lyr, mtime, area)  values('%s', '%s', '%s', '%s', %0.2f, %0.2f, %d, %0.2f, %0.2f, %s, '%s' )" \
                     % (stockBasicData['code'], stockBasicData['codealias'], stockBasicData['name'], stock['industry'], stockBasicData['circulated_stock'], \
-                      stockBasicData['total_stock'], status, stockBasicData['peg'], stockBasicData['lyr'], mytime)            
+                      stockBasicData['total_stock'], status, stockBasicData['peg'], stockBasicData['lyr'], mytime, stock['area'])            
             
             dboper.sqlExecute(sql)
             

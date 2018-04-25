@@ -98,10 +98,10 @@ def UpdateMyStock( dboper, stockData, mytime ):
 
 def InsertMyStock( dboper, stockData, mytime ):
                                        
-    sql = "insert into mystocks(code, cashin, cashout, initnetvalue, netvalue, iorate, turnover, qrratio, initprice, price, pricerate, initchangeratio, changeratio, amountp, amountn, inittime, codealias, mtype)\
-                 values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.4f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s', %d)" \
+    sql = "insert into mystocks(code, cashin, cashout, initnetvalue, netvalue, iorate, turnover, qrratio, initprice, price, pricerate, initchangeratio, changeratio, amountp, amountn, inittime, codealias, mtype, concept)\
+                 values('%s', %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.4f, %0.2f, %0.2f, %0.2f, %0.2f, %s, '%s', %d, '%s')" \
         %(stockData['code'], stockData['cashin'], stockData['cashout'], stockData['initnetvalue'], stockData['netvalue'], \
-          stockData['iorate'], stockData['turnover'], stockData['qrratio'], stockData['initprice'], stockData['price'], stockData['pricerate'], stockData['initchangeratio'], stockData['changeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'], stockData['mtype'])  
+          stockData['iorate'], stockData['turnover'], stockData['qrratio'], stockData['initprice'], stockData['price'], stockData['pricerate'], stockData['initchangeratio'], stockData['changeratio'], stockData['amountp'], stockData['amountn'], mytime, stockData['codealias'], stockData['mtype'], stockData['conceptstring'])  
                 
     
     LoggerFactory.debug("InsertMyStock", sql)
@@ -109,10 +109,30 @@ def InsertMyStock( dboper, stockData, mytime ):
     dboper.sqlExecute(sql)
 
 
+def InsertConcept( dboper, stockData, mytime ):
+                                       
+    sql = "insert into stockconcept( id, concept, mtime )\
+                 values(%d, '%s', %s)" % (stockData['id'], stockData['name'], mytime)
+   
+    LoggerFactory.debug("InsertConcept", sql)
+    
+    dboper.sqlExecute(sql)
+
+
+def InsertEachStockConcept( dboper, code, conceptid ):
+                                       
+    sql = "insert into conceptrelate(code, conceptid )\
+                 values('%s', %d)" % (code, conceptid)
+            
+    LoggerFactory.debug("InsertEachStockConcept", sql)
+    
+    dboper.sqlExecute(sql)
+
+
 
 def GetStockCode(dboper):
     
-    sql = "select codealias from stocks where status=1"
+    sql = "select codealias,code from stocks where status=1"
     
     results = dboper.queryData(sql)
     
@@ -121,7 +141,7 @@ def GetStockCode(dboper):
     
 def GetHisStockData(dboper, code, beginday, endday ):
     
-    sql = "select changeratio from hisstocks where code='%s' and mtime >=%s and mtime <=%s" % (code, beginday, endday)
+    sql = "select changeratio from hisstocks where code='%s' and mtime >%s and mtime <=%s" % (code, beginday, endday)
     
     LoggerFactory.debug("GetHisStockData", sql)
     results = dboper.queryData( sql )

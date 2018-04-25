@@ -85,6 +85,8 @@ if __name__=="__main__":
     dboper = DBOperation.DBOperation()        
 
 #     UpdateMyStock(dboper)
+#     exit 
+    
     while True:
           
         mytime = int(time.strftime("%H%M%S"))      

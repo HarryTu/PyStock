@@ -271,51 +271,50 @@ if "__name__ == __main__(input)":
         
         counter25 = 0 
         
-#         InitJJTemp(dboper,logger, input, circulated)
-#         HandleJJTemp(dboper,logger, input)
-#         HandleJJStock(dboper,logger, input, circulated)
-         
+# 
+#         HandleRTStock(dboper, input, circulated)
+#         exit
 #         while True:
         
 #         InitJJTemp(dboper, input, circulated)
 #         HandleJJTemp(dboper, input)
        
         while True:
-                 
+                  
             mytime = int(time.strftime("%H%M%S"))
-                 
+                  
             if (92030 <= mytime < 92435):
-                     
+                      
                 if counter20 < 1: 
-                         
+                          
                     InitJJTemp(dboper, input, circulated)
                     counter20 = counter20 + 1
-                
+                 
             elif (92435 <= mytime < 92500):
-     
+      
                     HandleJJTemp(dboper, input)
-     
+      
             elif (92500 <= mytime < 93000):
-                    
+                     
                 if counter25 < 1:
                     HandleJJStock(dboper, input, circulated)
                     counter25 = counter25 + 1
-                    
+                     
 #             elif (93000 <= mytime <= 114000) or (130000 <= mytime <= 180600):
 #                       
 #                 LoggerFactory.info("UpdateRTStocks", "Starting to update RTStocks table...") 
 #                 HandleRTStock(dboper, input, circulated)
 #                          
 #                 time.sleep(1)
-                  
-            elif(mytime < 90000 or mytime > 93030):
-                
-                LoggerFactory.info("UpdateRTStocks", "Out of trade time...exit!")
-                         
-                break
                    
+            elif(mytime < 90000 or mytime > 93030):
+                 
+                LoggerFactory.info("UpdateRTStocks", "Out of trade time...exit!")
+                          
+                break
+                    
             else: 
-                
+                 
                 LoggerFactory.info("UpdateRTStocks", "It's not in trade time yet, waiting for market to open!!")
                 time.sleep(5)
               

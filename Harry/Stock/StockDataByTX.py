@@ -307,6 +307,7 @@ def GetAllStockCode( FilePath ):
             basicInfo['code'] = codename
         
         basicInfo['industry'] = item[2]
+        basicInfo['area'] = item[3]
         
         stocklist.append(basicInfo)
         

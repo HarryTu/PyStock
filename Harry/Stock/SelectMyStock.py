@@ -14,16 +14,50 @@ import DBDataHandle
 import code
 
 
+
+def GetStockConcept(dboper, code):
+    
+    conceptstring = ""
+    counter = 1
+    
+    sql = "select b.concept from conceptrelate a, stockconcept b where a.conceptid=b.id and a.code = %s" % code
+    
+    conceptlist = dboper.queryData( sql )
+    
+    listlen = len ( conceptlist )
+    
+    if conceptlist is not None and listlen > 0:
+        for concept in conceptlist:
+
+            if counter < listlen: 
+                conceptstring = conceptstring + str(concept[0]) + ", "
+            elif counter >= listlen: 
+                conceptstring = conceptstring + str(concept[0]) 
+            
+            counter = counter + 1
+            
+        return conceptstring     
+    
+    else: 
+        
+        return None        
+
+
+    
+    
 def GetJJBasicData( dboper ):
             
     mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
     
-#     mytimequery = "str_to_date('2018-02-23', '%Y-%m-%d')"
+#     mytimequery = "str_to_date('2018-03-30', '%Y-%m-%d')"
       
-    sql_jjData = "select a.code, a.codealias, a.name, a.industry, b.initprice, b.price, c.cashin, c.cashout, c.netvalue, c.turnover, c.changeratio, c.amountp, c.amountn \
-                 from stocks a, jjtemp b, jjstocks c where a.code = b.code and b.code = c.code and b.mtime >=%s \
-                 and c.mtime >=%s and b.price > b.initprice and b.initprice >0 " % (mytimequery, mytimequery)
-      
+#     sql_jjData = "select a.code, a.codealias, a.name, a.industry, b.initprice, b.price, c.cashin, c.cashout, c.netvalue, c.turnover, c.changeratio, c.amountp, c.amountn \
+#                  from stocks a, jjtemp b, jjstocks c where a.code = b.code and b.code = c.code and b.mtime >=%s \
+#                  and c.mtime >=%s and b.price > b.initprice and b.initprice >0 " % (mytimequery, mytimequery)
+                 
+    sql_jjData = "select a.code, a.codealias, a.name, a.industry, b.cashin, b.cashout, b.netvalue, b.turnover, b.changeratio, b.amountp, b.amountn \
+             from stocks a, jjstocks b where a.code = b.code and b.mtime >=%s" % (mytimequery)
+             
     sql_mystock="select code from mystocks where mtype=0"
     
     
@@ -52,20 +86,26 @@ def GetJJBasicData( dboper ):
                   
             else:
                 stockData ={}
-                
+             
                 stockData['code'] = jjdata[0]
                 stockData['codealias'] = jjdata[1]
                 stockData['name'] = jjdata[2]
                 stockData['industry'] = jjdata[3]
-                stockData['initprice'] = jjdata[4]
-                stockData['price'] = jjdata[5]
-                stockData['cashin'] = jjdata[6]
-                stockData['cashout'] = jjdata[7]
-                stockData['netvalue'] = jjdata[8]
-                stockData['turnover'] = jjdata[9]
-                stockData['changeratio'] = jjdata[10]
-                stockData['amountp'] = jjdata[11]
-                stockData['amountn'] = jjdata[12]
+                stockData['cashin'] = jjdata[4]
+                stockData['cashout'] = jjdata[5]
+                stockData['netvalue'] = jjdata[6]
+                stockData['turnover'] = jjdata[7]
+                stockData['changeratio'] = jjdata[8]
+                stockData['amountp'] = jjdata[9]
+                stockData['amountn'] = jjdata[10]
+                
+                conceptstring = GetStockConcept(dboper, stockData['code'])
+                
+                if conceptstring is not None: 
+                    stockData['conceptstring'] = conceptstring
+                else: 
+                    stockData['conceptstring'] = "None"
+                
                 
                 stockDataList.append(stockData) 
         
@@ -80,11 +120,18 @@ def GetJJBasicData( dboper ):
             
             
 def SelectJJStock_rule1( dboper ):
-          
+
+
+    nowtime=datetime.datetime.now()
+    jjhisday = nowtime + datetime.timedelta(days=-1)
+     
+    jjhisquery_date= "str_to_date('%s'," % jjhisday.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+
+    stockData = {}
+              
     dataList = GetJJBasicData(dboper)
     
-    stockData = {}
-    
+
     if dataList is not None and len(dataList) > 0: 
         
         for data in dataList: 
@@ -93,8 +140,8 @@ def SelectJJStock_rule1( dboper ):
             stockData['codealias'] = data['codealias']
             stockData['name'] = data['name']
             stockData['industry'] = data['industry']
-            stockData['initprice'] = data['initprice']
-            stockData['price'] = data['price']
+            stockData['initprice'] = 0
+            stockData['price'] = 0
             stockData['cashin'] = data['cashin']
             stockData['cashout'] = data['cashout']
             stockData['initnetvalue'] = data['netvalue']
@@ -104,8 +151,10 @@ def SelectJJStock_rule1( dboper ):
             stockData['changeratio'] = data['changeratio']
             stockData['amountp'] = data['amountp']
             stockData['amountn'] = data['amountn']
+            stockData['conceptstring'] = data['conceptstring']
             stockData['qrratio'] = 0
             stockData['mtype']= 0
+                          
             
             if stockData['cashout'] > 0 and stockData['cashin'] > 0:
                 
@@ -115,19 +164,40 @@ def SelectJJStock_rule1( dboper ):
                 
                 stockData['iorate'] = 0
                     
-            if stockData['price'] > 0 and stockData['initprice'] > 0:
                 
-                stockData['pricerate'] = round( stockData['price'] / stockData['initprice'], 4 )
+            stockData['pricerate'] = 0
+
+            
+            jjhis_sql = "select amountp from jjstocks where code='%s' and mtime=%s" %(stockData['code'], jjhisquery_date)
+            result = dboper.queryOneData(jjhis_sql)
+            
+            if result is not None and result[0] > 0: 
+                jjhis_amounp = result[0]
+                
+                amounprate = round(stockData['amountp'] / result[0], 2)
+                
+            else:
+                jjhis_amounpt = None
+                amounprate = 0
+#             if round(stockData['price'] / stockData['initprice'], 4) >= 1.005 \
+#                 and stockData['amountp'] >= 200 and ( stockData['changeratio'] >= 1 and stockData['changeratio'] <= 5) \
+#                     and stockData['netvalue'] > 0: 
+
+            his_sql = "select changeratio from hisstocks where code='%s' and mtime=%s" %(stockData['code'], jjhisquery_date)
+            his_result = dboper.queryOneData(his_sql)
+            
+            if his_result is not None:
+                
+                his_changeratio = his_result[0]
                 
             else: 
                 
-                stockData['pricerate'] = 0
+                his_changeratio = None
             
             
-            if round(stockData['price'] / stockData['initprice'], 4) >= 1.005 \
-                and stockData['amountp'] >= 200 and ( stockData['changeratio'] >= -3 and stockData['changeratio'] <= 5) \
-                    and stockData['netvalue'] > 0: 
-                
+            if stockData['amountp'] >= 200 and amounprate >=2 and ( stockData['changeratio'] >= 1 and stockData['changeratio'] <= 6):
+#             if his_changeratio < 0 and stockData['changeratio'] >= 2:
+                                 
                 mytime = "str_to_date('%s'," % time.strftime('%Y-%m-%d %H:%M:%S') + "'%Y-%m-%d %H:%i:%s')"
                 
                 DBDataHandle.InsertMyStock(dboper, stockData, mytime)
@@ -148,6 +218,7 @@ def SelectJJStock_rule2( dboper ):
     enddayquery= "str_to_date('%s'," % jjhisday_end.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
     
     mytimequery = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
+#     mytimequery = "str_to_date('2018-03-19', '%Y-%m-%d')"
     
     jjtoday_sql="select a.code, a.codealias, a.name, a.industry, b.changeratio, b.amountp \
                  from stocks a, jjstocks b where a.code = b.code and b.mtime >=%s" % (mytimequery)
@@ -155,6 +226,8 @@ def SelectJJStock_rule2( dboper ):
     LoggerFactory.debug("SelectJJStock_rule2", jjtoday_sql)
     
     jjtodayResult = dboper.queryData(jjtoday_sql)
+    
+    codelist = GetFiveDaysHisData(dboper)
     
     if jjtodayResult is not None and len(jjtodayResult) > 0:
         
@@ -203,18 +276,19 @@ def SelectJJStock_rule2( dboper ):
                     
                      
             if tag and jjtodayData['amountprate'] > 2 :
-                        
-                print jjtodayData['code'],
-                print jjtodayData['name'],
-                print jjtodayData['industry'],
-                print jjtodayData['amountprate']
+                
+                if jjtodayData['code'] in codelist:      
+                    print jjtodayData['code'],
+                    print jjtodayData['name'],
+                    print jjtodayData['industry'],
+                    print jjtodayData['amountprate']
             
             
-def SelectMyStock( dboper, circulatedMin=70000,circulatedMax=1000000, changerate=1, iorate=1.4, amountp=3000, netvaluemin=1000 ):
+def SelectMyStock( dboper, circulatedMin=70000,circulatedMax=1200000, changerate=1, iorate=1.4, amountp=3000, netvaluemin=1000 ):
     
     mytimeqeury = "str_to_date('%s'," % time.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
     
-    mytimeqeury = "str_to_date('2018-02-22', '%Y-%m-%d')"
+#     mytimeqeury = "str_to_date('2018-02-22', '%Y-%m-%d')"
     
     select_sql = "select a.code,a.name,b.cashin,b.cashout,b.netvalue,b.iorate,b.turnover,b.price,b.changeratio,b.amountp,b.amountn, a.codealias, b.qrratio from stocks a, rtstocks b \
             where a.code=b.code and b.iorate>=%0.2f and b.amountp>=%0.2f and b.changeratio > %0.2f and ( circulated >= %0.2f and circulated <= %0.2f) and b.netvalue >= %0.2f and b.mtime >=%s and b.turnover <= %0.2f" \
@@ -304,7 +378,7 @@ def GetFiveDaysHisData(dboper):
     circulated = 1800000
     
     nowtime=datetime.datetime.now()    
-    detaday = datetime.timedelta(days=-6)
+    detaday = datetime.timedelta(days=-7)
     days_ago= nowtime + detaday
     
     beginday = "str_to_date('%s'," % days_ago.strftime('%Y-%m-%d') + "'%Y-%m-%d')"
@@ -314,10 +388,13 @@ def GetFiveDaysHisData(dboper):
     
     results = dboper.queryData(sql)
     
+    codelist = []
+    
     if results is not None and len(results) > 0:
         
         for stock in results:
             
+            counter = 0
             changeratio = 0
             code = stock[0] 
             name = stock[1]
@@ -326,20 +403,25 @@ def GetFiveDaysHisData(dboper):
 
             stockeach = DBDataHandle.GetHisStockData(dboper, code, beginday, endday)
             
-            if stockeach is not None and len(stockeach) == 5:
+            if stockeach is not None and len(stockeach) >= 4:
                 
                 for ratio in stockeach: 
                     
                     changeratio = changeratio + ratio[0]
                     
-                if changeratio >= 8 and changeratio <= 9:
+                    if ratio[0] > 0:
+                       counter = counter + 1
                     
+                if changeratio >= 6 and changeratio <= 12 and counter >= 4:
+                    
+#                     codelist.append(code)
                     print code + " ",
                     print name + " ",
                     print str(changeratio) + " ",
-                    print  industry + " ",
-                    print round(circulated / 10000 , 2 )
-
+                    print industry + " ",
+                    print str(round(circulated / 10000 , 2 )) + " ",
+                    print counter
+#         return codelist           
                 
                 
             
@@ -360,10 +442,13 @@ if __name__ == '__main__':
     dboper = DBOperation.DBOperation()
 
 #     SelectJJStock_rule1(dboper)
+#     print GetStockConcept(dboper, "300570")
+    
+ 
+    GetFiveDaysHisData(dboper)
+#     SelectJJStock_rule2(dboper)
 
-#     GetFiveDaysHisData(dboper)
-
-    SelectJJStock_rule2(dboper)
+#     SelectJJStock_rule1(dboper)
 #     while True:
 #              
 #         mytime = int(time.strftime("%H%M%S"))

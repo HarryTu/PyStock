@@ -2,6 +2,7 @@ create table stocks(
 code varchar(7),
 codealias varchar(10),
 name varchar(30),
+area varchar(40),
 status int,
 industry varchar(50),
 circulated float,
@@ -83,12 +84,14 @@ initchangeratio float,
 changeratio float,
 amountp float,
 amountn float,
-mtype int,					
+mtype int,		
+concept varchar(100),
 mtime datetime,
 inittime datetime
 );
 
 alter table mystocks add primary key(code,mtype);
+
 
 
 create table hisstocks(
@@ -107,3 +110,16 @@ mtime datetime
 );
 
 alter table hisstocks add primary key(code,mtime);
+
+
+create table conceptrelate(
+code varchar(7),
+conceptid int
+)
+
+
+create table stockconcept(
+id int,
+concept varchar(50),
+mtime datetime
+);

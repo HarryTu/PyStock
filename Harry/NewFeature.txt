@@ -5,3 +5,7 @@
 2. 判断股票停复牌状态
 
 3. 对周一进行判断，需要除去上周6，日的时间
+
+
+
+"C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump" -h127.0.0.1 -uroot -pSHr1ng3r pystock > backupfile.sql
